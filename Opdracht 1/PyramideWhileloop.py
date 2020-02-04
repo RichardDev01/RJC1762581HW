@@ -1,23 +1,23 @@
 def makepiramidefirsthalf(hight,base):
-    if base < hight:
-        for x in range(base):
-            print("*", end="")
-        print("")
+
+    while base < hight:
+        print(base*"*")
+        base+=1
         makepiramidefirsthalf(hight, base+1)
     return 0
 
-def makepiramidesecondhalf(hight):
+def makepiramidesecondhalf(hight,base):
     if hight ==0:
         return 0
-
-    for x in range(hight):
-        print("*", end="")
-    print("")
+    base=0
+    while base < hight:
+        print(base*"*")
+        base+=1
     return makepiramidesecondhalf(hight-1)
 
 def makepiramide(hight):
     makepiramidefirsthalf(hight,0)
-    makepiramidesecondhalf(hight)
+    makepiramidesecondhalf(hight,0)
     return 0
 
 
