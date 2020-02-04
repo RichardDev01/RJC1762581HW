@@ -10,3 +10,30 @@ Bedenk zelf wat het return type van deze functie moet zijn. Gebruik in je progra
 '''
 
 
+def count(zoekgetal):
+    counter = 0
+    while len(lijst) > 0:
+        if lijst[0] == zoekgetal:
+            counter +=1
+        lijst.pop(0)
+    print(counter)
+    return
+
+def compare(lijst):
+    counter = 0
+    print(len(lijst))
+    while len(lijst) > 1:
+        verschil = lijst[0] - lijst[1]
+        print(verschil)
+        if verschil > counter:
+            counter == verschil
+        lijst.pop(0)
+    print(counter)
+    return
+
+
+lijst = [1,2,2,3,4,5,2,2,5,4]
+zoekgetal = int(input('Welk getal zoek je: '))
+
+count(zoekgetal)
+compare(lijst)
