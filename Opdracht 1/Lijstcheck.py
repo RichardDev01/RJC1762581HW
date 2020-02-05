@@ -8,32 +8,47 @@ c. Schrijf een functie, die bepaalt of een gegeven lijst met alleen 1â€™en en 0â
   - Er mogen niet meer dan 12 nullen zijn.
 Bedenk zelf wat het return type van deze functie moet zijn. Gebruik in je programma de functie count() die je hebt geschreven bij de vorige opgave.
 '''
-
-
-def count(zoekgetal):
+def count(zoekgetal,lijstzoek):
     counter = 0
-    while len(lijst) > 0:
-        if lijst[0] == zoekgetal:
+    lijstedit = lijstzoek
+    while len(lijstedit) > 0:
+        if lijstedit[0] == zoekgetal:
             counter +=1
-        lijst.pop(0)
-    print(counter)
-    return
+        lijstedit.pop(0)
+    print("het getal",zoekgetal ,"komt", counter, "voor")
+    return counter
 
-def compare(lijst):
+def compare(lijstcompare):
     counter = 0
-    print(len(lijst))
-    while len(lijst) > 1:
-        verschil = lijst[0] - lijst[1]
-        print(verschil)
+    #print(len(lijst))
+    while len(lijstcompare) > 1:
+        verschil = lijstcompare[0] - lijstcompare[1]
+        #print(verschil)
         if verschil > counter:
-            counter == verschil
-        lijst.pop(0)
-    print(counter)
+            counter = verschil
+        lijstcompare.pop(0)
+    print("Het grootste verschill tussen de 1 op volgenden getallen =",counter)
+    return
+
+def count1en0(lijsteenofnull,lijsteenofnull2):
+
+    aantal0= count(0,lijsteenofnull)
+
+    aantal1=count(1, lijsteenofnull2)
+    if aantal1 > aantal0:
+        print("er zijn meer enen dan nullen")
+    else:
+        print("er zijn meer nullen dan enen")
+    if aantal0 > 12:
+        print("Er zijn teveel nullen")
     return
 
 
-lijst = [1,2,2,3,4,5,2,2,5,4]
+lijstcount = [1,2,2,9,4,5,2,2,5,4]
+lijstcompare = [1,2,2,9,4,5,2,2,5,4]
+lijsteenofnull = [1,1,1,0,0,1,1,0,1,0,1]
+lijsteenofnull2 = [1,1,1,0,0,1,1,0,1,0,1]
 zoekgetal = int(input('Welk getal zoek je: '))
-
-count(zoekgetal)
-compare(lijst)
+count(zoekgetal,lijstcount)
+compare(lijstcompare)
+count1en0(lijsteenofnull,lijsteenofnull2)
