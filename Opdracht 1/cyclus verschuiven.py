@@ -8,3 +8,9 @@ Voorbeeld 2: ch met bitwaarde 1011100 en n is gelijk aan -4 resulteert in een ch
 
 nog maken
 '''
+ch = str(input("Geeft een ch: "))
+n = int(input("Geef een n op: "))
+
+
+print(bin(ord(ch)))
+print(bin(ord(ch)+n))
