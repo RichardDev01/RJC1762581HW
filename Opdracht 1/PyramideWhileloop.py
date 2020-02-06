@@ -31,10 +31,10 @@ def makepiramidesecondhalfin(hight,base):
     return
 
 def makepiramide(hight):
-    makepiramidefirsthalf(hight,0)
-    makepiramidesecondhalf(hight,0)
-    makepiramidefirsthalfin(hight,0)
-    makepiramidesecondhalfin(hight,0)
+    makepiramidefirsthalf(hight,base)
+    makepiramidesecondhalf(hight,base)
+    makepiramidefirsthalfin(hight,base)
+    makepiramidesecondhalfin(hight,base)
 
     return 0
 

@@ -11,3 +11,22 @@ Meer oefenen met recursie: implementeer de eerdere sorteer-bereken-controleer op
 
 nog maken
 '''
+
+def fibonaci(list, grote):
+    if len(list) < grote:
+        list.append(list[grond] + list[grond + 1])
+        fibonaci(list, grond+1)
+    else:
+        print(list)
+        return
+    return
+
+list = [0,1]
+n = 15
+grond = 0
+#fibonaci(list, n)
+
+for i in range(n):
+    print(i)
+    list.append(list[i]+list[i+1])
+    print(list)
