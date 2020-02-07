@@ -16,14 +16,12 @@ def count(zoekgetal,lijstzoek):
             counter +=1
         lijstedit.pop(0)
     print("het getal",zoekgetal ,"komt", counter, "voor")
-    return counter
+    return
 
 def compare(lijstcompare):
     counter = 0
-    #print(len(lijst))
     while len(lijstcompare) > 1:
         verschil = lijstcompare[0] - lijstcompare[1]
-        #print(verschil)
         if verschil > counter:
             counter = verschil
         lijstcompare.pop(0)
@@ -31,9 +29,7 @@ def compare(lijstcompare):
     return
 
 def count1en0(lijsteenofnull,lijsteenofnull2):
-
     aantal0= count(0,lijsteenofnull)
-
     aantal1=count(1, lijsteenofnull2)
     if aantal1 > aantal0:
         print("er zijn meer enen dan nullen")
@@ -43,11 +39,14 @@ def count1en0(lijsteenofnull,lijsteenofnull2):
         print("Er zijn teveel nullen")
     return
 
-
+#ik had mutatie* problemen met list hergebruiken, graag uitleg*
 lijstcount = [1,2,2,9,4,5,2,2,5,4]
 lijstcompare = [1,2,2,9,4,5,2,2,5,4]
-lijsteenofnull = [1,1,1,0,0,1,1,0,1,0,1]
+
+#ik had mutatie* problemen met list hergebruiken, graag uitleg*
+lijsteenofnull  = [1,1,1,0,0,1,1,0,1,0,1]
 lijsteenofnull2 = [1,1,1,0,0,1,1,0,1,0,1]
+
 zoekgetal = int(input('Welk getal zoek je: '))
 count(zoekgetal,lijstcount)
 compare(lijstcompare)

@@ -2,9 +2,7 @@ def makepiramidefirsthalf(hight,base):
     while base < hight:
         string = base * "*"
         print(string)
-        #print('{:>20}'.format(string))
         base += 1
-
     return 0
 
 def makepiramidesecondhalf(hight,base):
@@ -17,7 +15,7 @@ def makepiramidesecondhalf(hight,base):
 def makepiramidefirsthalfin(hight,base):
     while base < hight:
         string = base * "*"
-        print('{:>20}'.format(string))
+        print('{:>20}'.format(string))  #formating string, kan beter
         base += 1
 
     return 0
@@ -26,7 +24,7 @@ def makepiramidesecondhalfin(hight,base):
     while base < hight:
         string = hight * "*"
 
-        print('{:>20}'.format(string))
+        print('{:>20}'.format(string))  #formating string, kan beter
         hight-=1
     return
 
@@ -40,5 +38,5 @@ def makepiramide(hight):
 
 
 Topofpiramide = int(input('Hight of the piramide: '))
-base = 0
+base = 0 #Base is niet nodig maar als ik later de pyramide anders wil maken, dan kan dat
 makepiramide(Topofpiramide)

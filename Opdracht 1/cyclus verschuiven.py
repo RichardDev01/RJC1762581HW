@@ -11,6 +11,6 @@ nog maken
 ch = str(input("Geeft een ch: "))
 n = int(input("Geef een n op: "))
 
-
+#ik zet de char om naar een binaire getal en tel daar een waarde bij op
 print(bin(ord(ch)))
 print(bin(ord(ch)+n))

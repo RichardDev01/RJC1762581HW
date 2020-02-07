@@ -7,15 +7,10 @@ bijvoorbeeld gelijk aan 34. De eerste elementen van de rij zijn dan als volgt:
 Implementeer een functie die fn uitrekent gegeven integer n. De functie moet recursief zijn.
 
 Meer oefenen met recursie: implementeer de eerdere sorteer-bereken-controleer opdrachten met recursieve functies.
-
-
-nog maken
 '''
 
 def fibonaci(list, grote,grond):
-
     if len(list) < grote:
-
         list.append(list[grond] + list[grond + 1])
         grond += 1
         fibonaci(list, grote, grond)
@@ -28,7 +23,9 @@ list = [0,1]
 n = 15
 grond = 0
 fibonaci(list, n,grond)
+
 '''
+#for functie voor fibonaci
 for i in range(n):
     print(i)
     list.append(list[i]+list[i+1])

@@ -9,7 +9,6 @@ def makepiramidefirsthalf(hight,base):
 def makepiramidesecondhalf(hight):
     if hight ==0:
         return 0
-
     for x in range(hight):
         print("*", end="")
     print("")
@@ -22,5 +21,5 @@ def makepiramide(hight):
 
 
 Topofpiramide = int(input('Hight of the piramide: '))
-base = 0
+base = 0    #Base is niet nodig maar als ik later de pyramide anders wil maken, dan kan dat
 makepiramide(Topofpiramide)

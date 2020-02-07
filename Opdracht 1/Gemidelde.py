@@ -9,9 +9,12 @@ def gemberekenen(lst):
         max += x
     gem = max/lenlst
     return gem
+
 lstinvoer = []
+
 lst = [1,4,5,7,3,5,6,2,3]
 print(gemberekenen(lst))
+
 print("er moeten 5 getalen ingevult worden")
 while len(lstinvoer) < 5:
     lstinvoer.append(int(input("Voeg een getal toe:")))

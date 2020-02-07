@@ -12,10 +12,8 @@ try:
     outfile = open(filenametarget, "w")
 
     for x in inhoud:
-        print(x)
         if "\n" in x:
             outfile.write(x[:-1])
-            print("empty")
         else:
             outfile.write(x)
     outfile.close()

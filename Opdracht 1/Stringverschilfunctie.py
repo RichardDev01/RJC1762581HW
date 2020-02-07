@@ -1,4 +1,10 @@
+'''
+Tekstcheck
+Schrijf een functie die de eerste index teruggeeft waarop twee strings een verschillende waarde hebben. Bedenk zelf een goede functienaam.
+Het complete programma vraagt om twee strings aan de gebruiker en print de index waarop deze twee strings verschillen. Zorg je dat de functie goed test. Let op: een string mag spaties bevatten! Voorbeeld output:
+'''
 def stringcom(Stringinput1,Stringinput2):
+    #in deze functie maak ik steeds de string van links naar rechts kleiner om te kijken waar het eerste verschil is
     counter = 0
     while len(Stringinput1) >= 0:
         if Stringinput1[0] == Stringinput2[0]:
