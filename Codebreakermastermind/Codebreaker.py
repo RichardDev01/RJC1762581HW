@@ -34,3 +34,105 @@ for i in gegokte_code:
        Witte pin
 
 '''
+import random
+
+def AICreateCode():
+    Gamemastercode = [ListKleurenNamen[random.randrange(AantalKleuren)],ListKleurenNamen[random.randrange(AantalKleuren)],ListKleurenNamen[random.randrange(AantalKleuren)],ListKleurenNamen[random.randrange(AantalKleuren)]]
+    #print("De gekozen code is", Gamemastercode)
+    return Gamemastercode
+
+def AIGokCode():
+    Gamemastercode = [ListKleurenNamen[random.randrange(AantalKleuren)],ListKleurenNamen[random.randrange(AantalKleuren)],ListKleurenNamen[random.randrange(AantalKleuren)],ListKleurenNamen[random.randrange(AantalKleuren)]]
+    #print("De gekozen code is", Gamemastercode)
+    return Gamemastercode
+
+def PlayerCreateCode():
+    Gamemastercode = []
+    while len(Gamemastercode) < AantalKleuren-1:
+        Gamemastercode.append(ListKleurenNamen[int(input("Geef een nummer tussen de 0 en "+ str(AantalKleuren)+ " op: "))])
+    #print("De gekozen code is", Gamemastercode)
+    return Gamemastercode
+
+def ControlleCode(gegokte_code):
+    Blackpin = 0
+    Whitepin =0
+    for i in gegokte_code:
+        if i==GlobalGamemastercode[gegokte_code.index(i)]:
+            Blackpin+=1
+        elif i in GlobalGamemastercode:
+            Whitepin+=1
+    return [Blackpin,Whitepin]
+
+def debugprint():
+    print("De GlobalGamemastercode =", GlobalGamemastercode)
+    print("De GlobalGokcode =", GlobalGokcode)
+    print("Het aantal zwarte pinnen zijn",GlobalAwsPin[0], 'Het aantal witte pinnen zijn',GlobalAwsPin[1])
+
+
+    return
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      Setup     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+#Global var
+AantalKleuren = 5  #maximaal 6
+ListKleurenNamen = ["zwart", "wit","groen","blauw","paars","rood"]
+Rondescount = 0
+AantalRondes = 10
+#Totaleronde3dlist = [ [[1],[]] , [[2],[]] , [[3],[]] , [[4],[]] , [[5],[]] , [[6],[]] , [[7],[]] , [[8],[]] , [[9],[]] , [[10],[]] ]
+#Totaleronde3dlist = [ [[],[]] , [[],[]] , [[],[]] , [[],[]] , [[],[]] , [[],[]] , [[],[]] , [[],[]] , [[],[]] , [[],[]] ]
+Totaleronde3dlist = [[] ,[] ,[],[],[],[],[],[],[],[]]
+Rondelist1 = Totaleronde3dlist[0]
+Rondelist2 = Totaleronde3dlist[1]
+Rondelist3 = Totaleronde3dlist[2]
+Rondelist4 = Totaleronde3dlist[3]
+Rondelist5 = Totaleronde3dlist[4]
+Rondelist6 = Totaleronde3dlist[5]
+Rondelist7 = Totaleronde3dlist[6]
+Rondelist8 = Totaleronde3dlist[7]
+Rondelist9 = Totaleronde3dlist[8]
+Rondelist10= Totaleronde3dlist[9]
+
+#AI keuze Game mastercode
+AICreateCodeBool = True
+#AICreateCodeBool = False
+
+#AI keuze Game gokcode code
+AIGokCodeBool = True
+#AIGokCodeBool = False
+
+GlobalGamemastercode= []
+GlobalGokcode = []
+GlobalAwsPin = []
+
+if AICreateCodeBool == True:
+    GlobalGamemastercode = AICreateCode()
+else:
+    GlobalGamemastercode = PlayerCreateCode()
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      Mainloop     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+
+while Rondescount < AantalRondes:
+    if AIGokCodeBool == True:
+        GlobalGokcode = AIGokCode()
+    else:
+        #GlobalGokcode = PlayerCreateCode()
+        GlobalGokcode = ['groen', 'blauw', 'zwart', 'wit']
+    GlobalAwsPin = ControlleCode(GlobalGokcode)
+    Totaleronde3dlist[Rondescount].append([GlobalGokcode])
+    Totaleronde3dlist[Rondescount].append([GlobalAwsPin])
+    #Totaleronde3dlist[Rondescount] = Totaleronde3dlist[[GlobalGokcode][GlobalAwsPin]]
+    #print(Totaleronde3dlist[Rondescount])
+    Rondescount += 1
+#print(Totaleronde3dlist)
+
+
+debugprint()
+
+print("Deze ronde heeft de volgende list",Rondelist1)
+print("Deze ronde heeft de volgende list",Rondelist2)
+print("Deze ronde heeft de volgende list",Rondelist3)
+print("Deze ronde heeft de volgende list",Rondelist4)
+print("Deze ronde heeft de volgende list",Rondelist5)
+print("Deze ronde heeft de volgende list",Rondelist6)
+print("Deze ronde heeft de volgende list",Rondelist7)
+print("Deze ronde heeft de volgende list",Rondelist8)
+print("Deze ronde heeft de volgende list",Rondelist9)
+print("Deze ronde heeft de volgende list",Rondelist10)
