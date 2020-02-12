@@ -42,9 +42,11 @@ def AICreateCode():
     return Gamemastercode
 
 def AIGokCode():
-    Gamemastercode = [ListKleurenNamen[random.randrange(AantalKleuren)],ListKleurenNamen[random.randrange(AantalKleuren)],ListKleurenNamen[random.randrange(AantalKleuren)],ListKleurenNamen[random.randrange(AantalKleuren)]]
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      Dit is een random nummer gokker met geen logica     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      GameGokcode moet een list van 4 elementen zijn      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+    GameGokcode = [ListKleurenNamen[random.randrange(AantalKleuren)],ListKleurenNamen[random.randrange(AantalKleuren)],ListKleurenNamen[random.randrange(AantalKleuren)],ListKleurenNamen[random.randrange(AantalKleuren)]]
     #print("De gekozen code is", Gamemastercode)
-    return Gamemastercode
+    return GameGokcode
 
 def PlayerCreateCode():
     Gamemastercode = []
@@ -56,11 +58,19 @@ def PlayerCreateCode():
 def ControlleCode(gegokte_code):
     Blackpin = 0
     Whitepin =0
-    for i in gegokte_code:
-        if i==GlobalGamemastercode[gegokte_code.index(i)]:
+    for i in range (len(gegokte_code)):
+        if gegokte_code[i]==GlobalGamemastercode[i]:
             Blackpin+=1
-        elif i in GlobalGamemastercode:
+            continue
+        elif gegokte_code[i] in GlobalGamemastercode:
             Whitepin+=1
+            continue
+    if Blackpin == 4:
+        Totaleronde3dlist[Rondescount].append([GlobalGokcode])
+        Totaleronde3dlist[Rondescount].append([GlobalAwsPin])
+        print(Totaleronde3dlist[Rondescount])
+        print("U heeft gewonnen")
+        quit()
     return [Blackpin,Whitepin]
 
 def debugprint():
@@ -75,7 +85,7 @@ def debugprint():
 AantalKleuren = 5  #maximaal 6
 ListKleurenNamen = ["zwart", "wit","groen","blauw","paars","rood"]
 Rondescount = 0
-AantalRondes = 10
+AantalRondes = 10   #normaal 10 maar kan minder
 #Totaleronde3dlist = [ [[1],[]] , [[2],[]] , [[3],[]] , [[4],[]] , [[5],[]] , [[6],[]] , [[7],[]] , [[8],[]] , [[9],[]] , [[10],[]] ]
 #Totaleronde3dlist = [ [[],[]] , [[],[]] , [[],[]] , [[],[]] , [[],[]] , [[],[]] , [[],[]] , [[],[]] , [[],[]] , [[],[]] ]
 Totaleronde3dlist = [[] ,[] ,[],[],[],[],[],[],[],[]]
@@ -107,6 +117,7 @@ if AICreateCodeBool == True:
 else:
     GlobalGamemastercode = PlayerCreateCode()
 
+print(GlobalGamemastercode)
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      Mainloop     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
 while Rondescount < AantalRondes:
@@ -119,11 +130,11 @@ while Rondescount < AantalRondes:
     Totaleronde3dlist[Rondescount].append([GlobalGokcode])
     Totaleronde3dlist[Rondescount].append([GlobalAwsPin])
     #Totaleronde3dlist[Rondescount] = Totaleronde3dlist[[GlobalGokcode][GlobalAwsPin]]
-    #print(Totaleronde3dlist[Rondescount])
+    print(Totaleronde3dlist[Rondescount])
     Rondescount += 1
 #print(Totaleronde3dlist)
 
-
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      Debug     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 debugprint()
 
 print("Deze ronde heeft de volgende list",Rondelist1)
