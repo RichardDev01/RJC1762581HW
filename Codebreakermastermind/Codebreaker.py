@@ -38,7 +38,7 @@ import random
 
 def AICreateCode():
     Gamemastercode = [ListKleurenNamen[random.randrange(AantalKleuren)],ListKleurenNamen[random.randrange(AantalKleuren)],ListKleurenNamen[random.randrange(AantalKleuren)],ListKleurenNamen[random.randrange(AantalKleuren)]]
-    #print("De gekozen code is", Gamemastercode)
+    print("De Gamemastercode is", Gamemastercode)
     return Gamemastercode
 
 def AIGokCode():
@@ -63,15 +63,18 @@ def ControlleCode(gegokte_code):
             Blackpin+=1
             continue
         elif gegokte_code[i] in GlobalGamemastercode:
-            Whitepin+=1
+
+            if GlobalGamemastercode.count(gegokte_code[i]) > Whitepin:
+                Whitepin += 1
+            else:
+                continue
             continue
-    if Blackpin == 4:
-        Totaleronde3dlist[Rondescount].append([GlobalGokcode])
-        Totaleronde3dlist[Rondescount].append([GlobalAwsPin])
-        print(Totaleronde3dlist[Rondescount])
-        print("U heeft gewonnen")
-        quit()
     return [Blackpin,Whitepin]
+
+def endgame():
+    print(Totaleronde3dlist[Rondescount])
+    print("U heeft gewonnen")
+    quit()
 
 def debugprint():
     print("De GlobalGamemastercode =", GlobalGamemastercode)
@@ -117,7 +120,7 @@ if AICreateCodeBool == True:
 else:
     GlobalGamemastercode = PlayerCreateCode()
 
-print(GlobalGamemastercode)
+#print(GlobalGamemastercode)
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      Mainloop     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
 while Rondescount < AantalRondes:
@@ -129,13 +132,15 @@ while Rondescount < AantalRondes:
     GlobalAwsPin = ControlleCode(GlobalGokcode)
     Totaleronde3dlist[Rondescount].append([GlobalGokcode])
     Totaleronde3dlist[Rondescount].append([GlobalAwsPin])
+    if GlobalAwsPin[0] == 4:
+        endgame()
     #Totaleronde3dlist[Rondescount] = Totaleronde3dlist[[GlobalGokcode][GlobalAwsPin]]
-    print(Totaleronde3dlist[Rondescount])
+    #print(Totaleronde3dlist[Rondescount])
     Rondescount += 1
 #print(Totaleronde3dlist)
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      Debug     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-debugprint()
+#debugprint()
 
 print("Deze ronde heeft de volgende list",Rondelist1)
 print("Deze ronde heeft de volgende list",Rondelist2)
