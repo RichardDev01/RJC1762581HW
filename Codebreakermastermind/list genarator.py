@@ -1,37 +1,18 @@
-import itertools
-AantalKleuren = 3  #maximaal 6
+'''
+https://www.youtube.com/watch?v=Qu3dThVy6KQ
+https://github.com/CoreyMSchafer/code_snippets/tree/master/Python/Itertools
+https://docs.python.org/2/library/itertools.html
+'''
+
+import  itertools
 ListKleurenNamen = ["zwart", "wit","groen","blauw","paars","rood"]
-newlist = []
-innerlist= []
-print(itertools.product('ABCD', repeat=2))
+result = itertools.product(ListKleurenNamen, repeat=4)
 
-'''
-for i in range(2):
-    for j in range(5):
-        innerlist.append([i])
-    newlist.append(innerlist)
+print(result)
+mainlist = []
 
+for item in result:
+    #print(item[0:4])
+    mainlist.append(list(item))
+print(mainlist[256][1])
 
-for i in range(AantalKleuren + 1):
-    for k in range(AantalKleuren + 1):
-        for l in range(AantalKleuren + 1):
-            newlist.append([])
-        newlist[1] = ListKleurenNamen[1]
-    newlist[0] = ListKleurenNamen[0]
-'''
-
-'''
-for x in range(AantalKleuren+1):
-    newlist.append(ListKleurenNamen[x])
-    for i in range(AantalKleuren + 1):
-        newlist.append(ListKleurenNamen[i])
-        for o in range(AantalKleuren + 1):
-            newlist.append(ListKleurenNamen[o])
-            innerlist.append(newlist)
-            for p in range(AantalKleuren + 1):
-                newlist.append(ListKleurenNamen[p])
-                innerlist.append(newlist)
-    #print(ListKleurenNamen[x])
-
-'''
-print(newlist)
