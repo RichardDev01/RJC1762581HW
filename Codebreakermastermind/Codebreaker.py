@@ -37,9 +37,9 @@ def ControlleCode(gegokte_code):
         if gegokte_code[i]==GlobalGamemastercode[i]:
             Blackpin+=1
             continue
-        elif gegokte_code[i] in GlobalGamemastercode:
-
-            if GlobalGamemastercode.count(gegokte_code[i]) > Whitepin:
+    for i in range(len(gegokte_code)):
+        if gegokte_code[i] in GlobalGamemastercode:
+            if GlobalGamemastercode.count(gegokte_code[i])>  Blackpin:
                 Whitepin += 1
             else:
                 continue
