@@ -1,40 +1,15 @@
 '''
-computer 10 poginging
+Sources voor uitleg over itertools;
 
-import random
-
-kleuren random(0,6) (5 kleuren)
-
-1 List met de code [1,2,3,4]
-
-    De poging   De feedback(1/2)    2 == zwarte pin
-10x [[1,2,3,4][1,2,3,4]]
+https://www.youtube.com/watch?v=Qu3dThVy6KQ
+https://github.com/CoreyMSchafer/code_snippets/tree/master/Python/Itertools
+https://docs.python.org/2/library/itertools.html
 
 
-**Use 2-2 patterns to detect the colors**
-
-Functie AI
-
-    Eerst 5x stategie 1, 2 x vaste kleur bij blue, en dan roleren door de kleuren
-
-    dan de waardens ophalen en dan een dictonary aanmaken om te kijken welke kleuren de meeste kans hebben
-    dan brute force met de laaste 5 pogingen
-
-funcatie Tekenbord
-    print(scope)
-
-Functie gokcode
-    list[0-4] == random(0,6)
-
-Functie Controle code:
-for i in gegokte_code:
-    If gegokte_kleur && positie == code_kleur && code_positie
-        Zwarte pin
-    elif gegokte_kleur in list code_kleur:
-       Witte pin
 
 '''
 import random
+import  itertools
 
 def AICreateCode():
     Gamemastercode = [ListKleurenNamen[random.randrange(AantalKleuren)],ListKleurenNamen[random.randrange(AantalKleuren)],ListKleurenNamen[random.randrange(AantalKleuren)],ListKleurenNamen[random.randrange(AantalKleuren)]]
@@ -114,15 +89,28 @@ AIGokCodeBool = True
 GlobalGamemastercode= []
 GlobalGokcode = []
 GlobalAwsPin = []
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      Code voor het maken van een geheugen bank     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+result = itertools.product(ListKleurenNamen, repeat=4)
+mainlist = []
+for item in result:
+    #print(item[0:4])
+    mainlist.append(list(item))
+print(mainlist[256][1])
 
+
+
+#print(GlobalGamemastercode)
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      Mainloop     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+
+# Het maken van de gamemastercode
 if AICreateCodeBool == True:
     GlobalGamemastercode = AICreateCode()
 else:
     GlobalGamemastercode = PlayerCreateCode()
 
-#print(GlobalGamemastercode)
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      Mainloop     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
+
+#Start play loop
 while Rondescount < AantalRondes:
     if AIGokCodeBool == True:
         GlobalGokcode = AIGokCode()
@@ -132,6 +120,8 @@ while Rondescount < AantalRondes:
     GlobalAwsPin = ControlleCode(GlobalGokcode)
     Totaleronde3dlist[Rondescount].append([GlobalGokcode])
     Totaleronde3dlist[Rondescount].append([GlobalAwsPin])
+
+    #Als er 4 zwarte pinnen tussendoor zijn stopt de game
     if GlobalAwsPin[0] == 4:
         endgame()
     #Totaleronde3dlist[Rondescount] = Totaleronde3dlist[[GlobalGokcode][GlobalAwsPin]]
