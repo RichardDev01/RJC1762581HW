@@ -15,8 +15,11 @@ def ControlleCode(gegokte_code):
             continue
     for i in range(len(gegokte_code)):
         if gegokte_code[i] in GlobalGamemastercode:
-            if GlobalGamemastercode.count(gegokte_code[i])>  Blackpin:
+            if GlobalGamemastercode.count(gegokte_code[i])>Blackpin and Whitepin < GlobalGamemastercode.count(gegokte_code[i]) and gegokte_code.count(gegokte_code[i])>Blackpin:
+                #hier moet ik nog aanpassen nu is het verkeerd
                 Whitepin += 1
+
+
             else:
                 continue
             continue
@@ -31,7 +34,8 @@ def ControlleCodeAIBrain(gegokte_code):
             continue
     for i in range(len(gegokte_code)):
         if gegokte_code[i] in AIGokCodeComparator:
-            if AIGokCodeComparator.count(gegokte_code[i])>  Blackpin:
+            if AIGokCodeComparator.count(gegokte_code[i])>  Blackpin and Whitepin < AIGokCodeComparator.count(gegokte_code[i]) and gegokte_code.count(gegokte_code[i])>Blackpin:
+                # hier moet ik nog aanpassen nu is het verkeerd
                 Whitepin += 1
             else:
                 continue
@@ -39,15 +43,17 @@ def ControlleCodeAIBrain(gegokte_code):
     return [Blackpin,Whitepin]
 
 
-GlobalGamemastercode= ['groen', 'zwart', 'paars', 'paars']
+GlobalGamemastercode= ['groen', 'zwart', 'zwart', 'zwart']
 GlobalGokcode = []
 GlobalAwsPin = []
-
+AantalKleuren = 5  #maximaal 6
 ListKleurenNamen = ["zwart", "wit","groen","blauw","paars","rood"]
 DefaultGokCode = [ListKleurenNamen[0], ListKleurenNamen[0], ListKleurenNamen[1], ListKleurenNamen[1]]
 
 AIGokCodeComparator= DefaultGokCode
 result = itertools.product(ListKleurenNamen, repeat=4)
+
+#GlobalGamemastercode = [ListKleurenNamen[random.randrange(AantalKleuren)], ListKleurenNamen[random.randrange(AantalKleuren)],ListKleurenNamen[random.randrange(AantalKleuren)], ListKleurenNamen[random.randrange(AantalKleuren)]]
 
 mainlist = []
 AIChoiceslist= []
@@ -66,15 +72,15 @@ for i in range(len(mainlist)):
     #print(mainlist[i],end= " ")
     AITestuitkomst = ControlleCodeAIBrain(mainlist[i])
     #print(ControlleCodeAIBrain(mainlist[i]))
-    if AITestuitkomst[0] >= GokUitkomst[0]:
-        AIChoiceslist.append(mainlist[i])
+    if (AITestuitkomst[0] < GokUitkomst[0]) or (AITestuitkomst[1] < GokUitkomst[1]):
+        #AIChoiceslist.append(mainlist[i])
         mainlist[i] = ""
 
-for i in range(len(mainlist),0,-1):
-    if mainlist[i*] == "":
-        mainlist.pop(i)
+while '' in  mainlist:
+    mainlist.remove('')
 
-print(mainlist)
+print(len(mainlist))
+#print(mainlist)
 #ronde 2
 '''
 AIGokCodeComparator = AIChoiceslist[random.randrange(len(AIChoiceslist))]
