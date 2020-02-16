@@ -10,6 +10,41 @@ def ControlleCode(gegokte_code):
     '''De witte pin correctie werkt niet 100% maar dar maakt in deze keuze niet uit behalve effiecnietie'''
     Blackpin = 0
     Whitepin =0
+    Collourblindpin=0
+
+    set1 = set(GlobalGamemastercode)
+    set2 = set(gegokte_code)
+    list3 = list(set1 & set2)
+    #print(list3)
+    for i in list3:
+        #print(GlobalGamemastercode.count(i))
+        #print(gegokte_code.count(i))
+        if GlobalGamemastercode.count(i) <=gegokte_code.count(i):
+            Whitepin += GlobalGamemastercode.count(i)
+            Collourblindpin +=GlobalGamemastercode.count(i)
+    for i in range(len(gegokte_code)):
+        #print("globalmaster =", GlobalGamemastercode.count(gegokte_code[i]))
+        #print("gegoktecode",gegokte_code.count(gegokte_code[i]))
+        if gegokte_code[i]==GlobalGamemastercode[i]:
+            Blackpin +=1
+            Whitepin -=1
+
+    '''
+    
+    for i in range(len(gegokte_code)):
+        #print("globalmaster =", GlobalGamemastercode.count(gegokte_code[i]))
+        #print("gegoktecode",gegokte_code.count(gegokte_code[i]))
+        if gegokte_code[i]==GlobalGamemastercode[i]:
+            Blackpin +=1
+            #Whitepin -=1
+        compare = GlobalGamemastercode.count(gegokte_code[i])
+        comparegok = gegokte_code.count(gegokte_code[i])
+        #if gegokte_code[i] in GlobalGamemastercode and (GlobalGamemastercode.count(gegokte_code[i]) <= gegokte_code.count(gegokte_code[i])):
+        if gegokte_code[i] in GlobalGamemastercode and (compare + Whitepin <=comparegok):
+            Whitepin +=1
+    '''
+
+    '''
     for i in range (len(gegokte_code)):
         if gegokte_code[i]==GlobalGamemastercode[i]:
             Blackpin+=1
@@ -17,6 +52,9 @@ def ControlleCode(gegokte_code):
     #for i in range(len(gegokte_code)):
         if gegokte_code[i] in GlobalGamemastercode and (GlobalGamemastercode.count(gegokte_code[i]) > Whitepin):
             Whitepin += 1
+           '''
+
+
     '''
     for i in range(len(gegokte_code)):
         if gegokte_code[i] in GlobalGamemastercode and gegokte_code[i] !=GlobalGamemastercode[i] and GlobalGamemastercode.count(gegokte_code[i]) >= gegokte_code.count(gegokte_code[i]):
@@ -32,10 +70,34 @@ def ControlleCode(gegokte_code):
              #   continue
             #continue
       '''
-    return [Blackpin,Whitepin]
+    if Whitepin <0:
+        Whitepin = 0
+    return [Blackpin,Whitepin,Collourblindpin]
 
 def ControlleCodeAIBrain(gegokte_code):
     '''De witte pin correctie werkt niet 100% maar dar maakt in deze keuze niet uit behalve effiecnietie'''
+
+    Blackpin = 0
+    Whitepin =0
+    Collourblindpin=0
+    set1 = set(AIGokCodeComparator)
+    set2 = set(gegokte_code)
+    list3 = list(set1 & set2)
+    #print(list3)
+    for i in list3:
+        #print(GlobalGamemastercode.count(i))
+        #print(gegokte_code.count(i))
+        if AIGokCodeComparator.count(i) <=gegokte_code.count(i):
+            Whitepin += AIGokCodeComparator.count(i)
+            Collourblindpin += AIGokCodeComparator.count(i)
+    for i in range(len(gegokte_code)):
+        #print("globalmaster =", GlobalGamemastercode.count(gegokte_code[i]))
+        #print("gegoktecode",gegokte_code.count(gegokte_code[i]))
+        if gegokte_code[i]==AIGokCodeComparator[i]:
+            Blackpin +=1
+            Whitepin -=1
+        '''
+    
     Blackpin = 0
     Whitepin =0
     for i in range (len(gegokte_code)):
@@ -46,6 +108,8 @@ def ControlleCodeAIBrain(gegokte_code):
         if gegokte_code[i] in AIGokCodeComparator and (AIGokCodeComparator.count(gegokte_code[i]) > Whitepin):
         #if gegokte_code[i] in AIGokCodeComparator and (AIGokCodeComparator.count(gegokte_code[i])- gegokte_code.count(gegokte_code[i])) >= Whitepin:
             Whitepin += 1
+    
+    '''
 
     '''       
     for i in range(len(gegokte_code)):
@@ -57,15 +121,17 @@ def ControlleCodeAIBrain(gegokte_code):
             continue
         continue
     '''
-    return [Blackpin,Whitepin]
+    return [Blackpin,Whitepin,Collourblindpin]
 
 def aibraincode(mainlist):
     ailist = mainlist
     for i in range(len(ailist)):
         # print(mainlist[i],end= " ")
         AITestuitkomst = ControlleCodeAIBrain(ailist[i])
+        #print(AITestuitkomst)
         # print(ControlleCodeAIBrain(mainlist[i]))
-        if (AITestuitkomst[0] < GokUitkomst[0] or GokUitkomst[1] > AITestuitkomst[1]):
+        if (AITestuitkomst[2] < GokUitkomst[2]):
+        #if (AITestuitkomst[0] < GokUitkomst[0] or GokUitkomst[1] >= AITestuitkomst[1]):
             # if (AITestuitkomst[0] < GokUitkomst[0] or GokUitkomst[1] > AITestuitkomst[1]):
             # if (AITestuitkomst[0] < GokUitkomst[0] or  GokUitkomst[1] < AITestuitkomst[1]):
             # if (AITestuitkomst[0] < GokUitkomst[0]) or (AITestuitkomst[1] < GokUitkomst[1]):
@@ -77,7 +143,7 @@ def aibraincode(mainlist):
     return ailist
 
 
-GlobalGamemastercode= ['zwart', 'wit', 'paars', 'wit'] #['blauw', 'paars', 'groen', 'paars']
+GlobalGamemastercode= ['paars', 'blauw', 'paars', 'wit'] #['blauw', 'paars', 'groen', 'paars']   ['wit', 'groen', 'groen', 'zwart']
 GlobalGokcode = []
 GlobalAwsPin = []
 AantalKleuren = 5  #maximaal 6
@@ -87,7 +153,7 @@ DefaultGokCode = [ListKleurenNamen[0], ListKleurenNamen[0], ListKleurenNamen[1],
 AIGokCodeComparator= DefaultGokCode
 result = itertools.product(ListKleurenNamen, repeat=4)
 
-GlobalGamemastercode = [ListKleurenNamen[random.randrange(AantalKleuren)], ListKleurenNamen[random.randrange(AantalKleuren)],ListKleurenNamen[random.randrange(AantalKleuren)], ListKleurenNamen[random.randrange(AantalKleuren)]]
+#GlobalGamemastercode = [ListKleurenNamen[random.randrange(AantalKleuren)], ListKleurenNamen[random.randrange(AantalKleuren)],ListKleurenNamen[random.randrange(AantalKleuren)], ListKleurenNamen[random.randrange(AantalKleuren)]]
 
 mainlist = []
 AIChoiceslist= []
@@ -104,7 +170,8 @@ print(GokUitkomst)
 print(len(mainlist))
 ronde = 1
 
-while ronde < 50:
+
+while ronde < 1:
     mainlist = aibraincode(mainlist)
     GokUitkomst = ControlleCode(mainlist[random.randrange(len(mainlist))])
     print(GokUitkomst)
