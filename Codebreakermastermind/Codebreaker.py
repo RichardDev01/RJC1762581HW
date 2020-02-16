@@ -5,8 +5,6 @@ https://www.youtube.com/watch?v=Qu3dThVy6KQ
 https://github.com/CoreyMSchafer/code_snippets/tree/master/Python/Itertools
 https://docs.python.org/2/library/itertools.html
 
-
-
 '''
 import random
 import  itertools
@@ -156,14 +154,11 @@ if AICreateCodeBool == True:
 else:
     GlobalGamemastercode = PlayerCreateCode()
 
-
-
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~
 GokUitkomst = ControlleCode(DefaultGokCode)
 print(GokUitkomst)
 print(len(mainlist))
 ronde = 1
-
 
 mainlist = aibraincode(mainlist)
 GokUitkomst = ControlleCode(mainlist[1])
@@ -193,7 +188,6 @@ while Rondescount < AantalRondes:
     #print(Totaleronde3dlist[Rondescount])
     Rondescount += 1
 #print(Totaleronde3dlist)
-
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      Debug     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 #debugprint()
 
