@@ -130,11 +130,11 @@ def aibraincode(mainlist):
         AITestuitkomst = ControlleCodeAIBrain(ailist[i])
         #print(AITestuitkomst)
         # print(ControlleCodeAIBrain(mainlist[i]))
-        if (AITestuitkomst[2] < GokUitkomst[2]):
+        #if (AITestuitkomst[2] < GokUitkomst[2]):
         #if (AITestuitkomst[0] < GokUitkomst[0] or GokUitkomst[1] >= AITestuitkomst[1]):
-            # if (AITestuitkomst[0] < GokUitkomst[0] or GokUitkomst[1] > AITestuitkomst[1]):
-            # if (AITestuitkomst[0] < GokUitkomst[0] or  GokUitkomst[1] < AITestuitkomst[1]):
-            # if (AITestuitkomst[0] < GokUitkomst[0]) or (AITestuitkomst[1] < GokUitkomst[1]):
+        #if (AITestuitkomst[0] < GokUitkomst[0] or GokUitkomst[1] > AITestuitkomst[1]):
+        if (AITestuitkomst[0] < GokUitkomst[0] or  GokUitkomst[1] < AITestuitkomst[1]):
+        #if (AITestuitkomst[0] < GokUitkomst[0]) or (AITestuitkomst[1] < GokUitkomst[1]):
             # AIChoiceslist.append(mainlist[i])
             mainlist[i] = ""
 
@@ -153,7 +153,7 @@ DefaultGokCode = [ListKleurenNamen[0], ListKleurenNamen[0], ListKleurenNamen[1],
 AIGokCodeComparator= DefaultGokCode
 result = itertools.product(ListKleurenNamen, repeat=4)
 
-#GlobalGamemastercode = [ListKleurenNamen[random.randrange(AantalKleuren)], ListKleurenNamen[random.randrange(AantalKleuren)],ListKleurenNamen[random.randrange(AantalKleuren)], ListKleurenNamen[random.randrange(AantalKleuren)]]
+GlobalGamemastercode = [ListKleurenNamen[random.randrange(AantalKleuren)], ListKleurenNamen[random.randrange(AantalKleuren)],ListKleurenNamen[random.randrange(AantalKleuren)], ListKleurenNamen[random.randrange(AantalKleuren)]]
 
 mainlist = []
 AIChoiceslist= []
@@ -171,14 +171,24 @@ print(len(mainlist))
 ronde = 1
 
 
-while ronde < 1:
+mainlist = aibraincode(mainlist)
+print(len(mainlist))
+GokUitkomst = ControlleCode(mainlist[1])
+print(GokUitkomst)
+
+mainlist = aibraincode(mainlist)
+print(len(mainlist))
+
+
+
+while ronde < 8:
     mainlist = aibraincode(mainlist)
-    GokUitkomst = ControlleCode(mainlist[random.randrange(len(mainlist))])
+    AIGokCodeComparator = mainlist[random.randrange(len(mainlist))]
+    GokUitkomst = ControlleCode(AIGokCodeComparator)
     print(GokUitkomst)
     print(len(mainlist))
     ronde +=1
 print(mainlist)
-
 #print(aibraincode(mainlist))
 
 '''
