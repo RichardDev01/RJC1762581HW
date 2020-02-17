@@ -187,7 +187,7 @@ while Rondescount < AantalRondes:
     #Totaleronde3dlist[Rondescount] = Totaleronde3dlist[[GlobalGokcode][GlobalAwsPin]]
     #print(Totaleronde3dlist[Rondescount])
     Rondescount += 1
-#print(Totaleronde3dlist)
+print(Totaleronde3dlist)
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      Debug     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 #debugprint()
 
