@@ -1,10 +1,8 @@
 '''
 Sources voor uitleg over itertools;
-
 https://www.youtube.com/watch?v=Qu3dThVy6KQ
 https://github.com/CoreyMSchafer/code_snippets/tree/master/Python/Itertools
 https://docs.python.org/2/library/itertools.html
-
 '''
 import random
 import  itertools
@@ -18,16 +16,13 @@ def AIGokCode():
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      Dit is een random nummer gokker met geen logica     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      GameGokcode moet een list van 4 elementen zijn      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
     GameGokcode = [ListKleurenNamen[random.randrange(AantalKleuren)],ListKleurenNamen[random.randrange(AantalKleuren)],ListKleurenNamen[random.randrange(AantalKleuren)],ListKleurenNamen[random.randrange(AantalKleuren)]]
-    #print("De gekozen code is", Gamemastercode)
     return GameGokcode
 
 def PlayerCreateCode():
     Gamemastercode = []
     while len(Gamemastercode) < AantalKleuren-1:
         Gamemastercode.append(ListKleurenNamen[int(input("Geef een nummer tussen de 0 en "+ str(AantalKleuren)+ " op: "))])
-    #print("De gekozen code is", Gamemastercode)
     return Gamemastercode
-
 
 def ControlleCode(gegokte_code):
     Blackpin = 0
@@ -46,34 +41,31 @@ def ControlleCode(gegokte_code):
             Whitepin -= 1
     if Whitepin < 0:
         Whitepin = 0
+
     return [Blackpin, Whitepin, Collourblindpin]
 
-
 def ControlleCodeAIBrain(gegokte_code):
-    '''De witte pin correctie werkt niet 100% maar dar maakt in deze keuze niet uit behalve effiecnietie'''
-
     Blackpin = 0
     Whitepin = 0
     Collourblindpin = 0
     set1 = set(AIGokCodeComparator)
     set2 = set(gegokte_code)
     list3 = list(set1 & set2)
-    # print(list3)
     for i in list3:
-        # print(GlobalGamemastercode.count(i))
-        # print(gegokte_code.count(i))
         if AIGokCodeComparator.count(i) <= gegokte_code.count(i):
             Whitepin += AIGokCodeComparator.count(i)
             Collourblindpin += AIGokCodeComparator.count(i)
     for i in range(len(gegokte_code)):
-        # print("globalmaster =", GlobalGamemastercode.count(gegokte_code[i]))
-        # print("gegoktecode",gegokte_code.count(gegokte_code[i]))
         if gegokte_code[i] == AIGokCodeComparator[i]:
             Blackpin += 1
             Whitepin -= 1
     return [Blackpin, Whitepin, Collourblindpin]
 
 def aibraincode(mainlist):
+    '''
+    De code hieronder controleerd elke uitkomst van de geheugen bank met de voorgaanden uitkomst om alles er uit tefilteren wat slechter is door dat element in de list te vervangen met een "".
+    Aan het einde van de functie word leeg element verwijderd uit de lijst om alleen nog maar de meest correcte combinaties over tehouden.
+    '''
     ailist = mainlist
     for i in range(len(ailist)):
         # print(mainlist[i],end= " ")
@@ -101,17 +93,14 @@ def debugprint():
     print("De GlobalGamemastercode =", GlobalGamemastercode)
     print("De GlobalGokcode =", GlobalGokcode)
     print("Het aantal zwarte pinnen zijn",GlobalAwsPin[0], 'Het aantal witte pinnen zijn',GlobalAwsPin[1])
-
-
     return
+
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      Setup     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 #Global var
 AantalKleuren = 5  #maximaal 6
 ListKleurenNamen = ["zwart", "wit","groen","blauw","paars","rood"]
 Rondescount = 0
 AantalRondes = 10   #normaal 10 maar kan minder
-#Totaleronde3dlist = [ [[1],[]] , [[2],[]] , [[3],[]] , [[4],[]] , [[5],[]] , [[6],[]] , [[7],[]] , [[8],[]] , [[9],[]] , [[10],[]] ]
-#Totaleronde3dlist = [ [[],[]] , [[],[]] , [[],[]] , [[],[]] , [[],[]] , [[],[]] , [[],[]] , [[],[]] , [[],[]] , [[],[]] ]
 Totaleronde3dlist = [[] ,[] ,[],[],[],[],[],[],[],[]]
 Rondelist1 = Totaleronde3dlist[0]
 Rondelist2 = Totaleronde3dlist[1]
@@ -128,11 +117,14 @@ Rondelist10= Totaleronde3dlist[9]
 AICreateCodeBool = True
 #AICreateCodeBool = False
 
+#keuze van algoritme, 0 = puur random, 1= interpertatie van broncode
+AIKeuzeAlg = 0
+
 #AI keuze Game gokcode code
 AIGokCodeBool = True
 #AIGokCodeBool = False
 
-GlobalGamemastercode= ['paars', 'blauw', 'paars', 'wit'] #['blauw', 'paars', 'groen', 'paars']   ['wit', 'groen', 'groen', 'zwart']
+GlobalGamemastercode= []
 GlobalGokcode = []
 GlobalAwsPin = []
 DefaultGokCode = [ListKleurenNamen[0], ListKleurenNamen[0], ListKleurenNamen[1], ListKleurenNamen[1]]
@@ -142,10 +134,8 @@ AIGokCodeComparator= DefaultGokCode
 result = itertools.product(ListKleurenNamen, repeat=4)
 mainlist = []
 for item in result:
-    #print(item[0:4])
     mainlist.append(list(item))
 
-#print(GlobalGamemastercode)
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      Mainloop     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
 # Het maken van de gamemastercode
@@ -167,25 +157,31 @@ mainlist = aibraincode(mainlist)
 #Start play loop
 while Rondescount < AantalRondes:
     if AIGokCodeBool == True:
-        #GlobalGokcode = AIGokCode()
-        mainlist = aibraincode(mainlist)
-        GameGokcode = mainlist[random.randrange(len(mainlist))]
-        GokUitkomst = ControlleCode(GameGokcode)
-        print(GokUitkomst)
-        print(len(mainlist))
+        if AIKeuzeAlg == 0:
+            GlobalGokcode = AIGokCode()
+            GlobalAwsPin = ControlleCode(GlobalGokcode)
+        elif AIKeuzeAlg== 1:
+            mainlist = aibraincode(mainlist)
+            GameGokcode = mainlist[random.randrange(len(mainlist))]
+            GokUitkomst = ControlleCode(GameGokcode)
+            print(GokUitkomst)
+            print(len(mainlist))
+            GlobalAwsPin = GokUitkomst
+            GlobalGokcode = GameGokcode
+        elif AIKeuzeAlg == 3:
+            print("Ai placeholder nmr3")
+        else:
+            print("Ai placeholder nmr4")
     else:
+        #switch de comment om zelf code in te vullen met getallen, dit was voor de makelijkeheid
         #GlobalGokcode = PlayerCreateCode()
         GlobalGokcode = ['groen', 'blauw', 'zwart', 'wit']
-    GlobalAwsPin = GokUitkomst
-    GlobalGokcode = GameGokcode
     Totaleronde3dlist[Rondescount].append([GlobalGokcode])
     Totaleronde3dlist[Rondescount].append([GlobalAwsPin])
 
     #Als er 4 zwarte pinnen tussendoor zijn stopt de game
     if GlobalAwsPin[0] == 4:
         endgame()
-    #Totaleronde3dlist[Rondescount] = Totaleronde3dlist[[GlobalGokcode][GlobalAwsPin]]
-    #print(Totaleronde3dlist[Rondescount])
     Rondescount += 1
 print(Totaleronde3dlist)
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      Debug     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
