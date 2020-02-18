@@ -72,7 +72,9 @@ def debugprint():
     return
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      Setup     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+
 #Global var
+
 AantalKleuren = 5  #maximaal 6
 ListKleurenNamen = ["zwart", "wit","groen","blauw","paars","rood"]
 Rondescount = 0
@@ -105,7 +107,6 @@ GlobalGokcode = []
 GlobalAwsPin = []
 DefaultGokCode = [ListKleurenNamen[0], ListKleurenNamen[0], ListKleurenNamen[1], ListKleurenNamen[1]]
 
-AIGokCodeComparator= DefaultGokCode
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      Code voor het maken van een geheugen bank     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 result = itertools.product(ListKleurenNamen, repeat=4)
 mainlist = []
@@ -133,6 +134,7 @@ for i in range (0,AantalRondes):
             print(mainlist[1])
             GokUitkomst = ControlleCode(mainlist[1])
             mainlist = aibraincode(mainlist)
+            print(len(mainlist))
             GameGokcode = mainlist[1]
             '''
             mainlist = aibraincode(mainlist)
@@ -157,7 +159,6 @@ for i in range (0,AantalRondes):
 
     #Als er 4 zwarte pinnen tussendoor zijn stopt de game
     if GameGokcode == GlobalGamemastercode:
-    #if GlobalAwsPin[0] == 4:
         endgame()
     Rondescount += 1
 
