@@ -128,29 +128,26 @@ else:
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~
 print(len(mainlist))    #Debug print om te kijken of alle elementen toegevoegt zijn in de grote lijst
 #Start play loop
-#while Rondescount < AantalRondes:
 for i in range (0,AantalRondes):
     if AIGokCodeBool == True:
         if AIKeuzeAlg == 0:
-            GlobalGokcode = AIGokCode()
-            GlobalAwsPin = ControlleCode(GlobalGokcode)
+            GlobalGokcode = AIGokCode() #Random code ophalen
+            GlobalAwsPin = ControlleCode(GlobalGokcode)     #gok maken en feedback opvragen
         elif AIKeuzeAlg== 1:
             print(mainlist[1])
             GokUitkomst = ControlleCode(mainlist[1])
+            GlobalAwsPin = GokUitkomst
+
             mainlist = aibraincode(mainlist)
             print(len(mainlist)) #Debug print om de lengte van de lijst bij tehouden
-            GameGokcode = mainlist[1]
-            mainlist.pop(1)
-            '''
-            mainlist = aibraincode(mainlist)
-            GameGokcode = mainlist[random.randrange(len(mainlist))]
-            GokUitkomst = ControlleCode(GameGokcode)
-            '''
 
+            GameGokcode = mainlist[1]
+            GlobalGokcode = GameGokcode
+
+            mainlist.pop(1) #Verwijderen van het element dat is gebruikt voor de gok
+            
             print(GokUitkomst)
             print(len(mainlist))
-            GlobalAwsPin = GokUitkomst
-            GlobalGokcode = GameGokcode
         elif AIKeuzeAlg == 3:
             print("Ai placeholder nmr3")
         else:
