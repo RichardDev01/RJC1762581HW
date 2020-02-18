@@ -31,20 +31,25 @@ def ControlleCode(gegokte_code):
     Blackpin = 0
     Whitepin = 0
     Collourblindpin = 0
+
+    #Het omzetten van list naar sets om de overeenkomsten te isoleren
     set1 = set(GlobalGamemastercode)
     set2 = set(gegokte_code)
     list3 = list(set1 & set2)
     for i in list3:
+        # van alle overeenkosmten bepalen hoeveel witte pinnen er moeten zijn (ook zwarte pinnen zijn nog wit)
         if GlobalGamemastercode.count(i) <= gegokte_code.count(i):
             Whitepin += GlobalGamemastercode.count(i)
-            Collourblindpin += GlobalGamemastercode.count(i)
+            Collourblindpin += GlobalGamemastercode.count(i)    #niet gebruikte variable, overgebleven van een eventuele optie voor anderen algoritme die alleen kijkt of er pinnen zijn
     for i in range(len(gegokte_code)):
+        #het eventueel omzetten van witte pinnen naar zwarte pinnen
         if gegokte_code[i] == GlobalGamemastercode[i]:
             Blackpin += 1
             Whitepin -= 1
     if Whitepin < 0:
         Whitepin = 0
     feedbck= [Blackpin, Whitepin]
+    #feedbck= [Blackpin, Whitepin,Collourblindpin] #ongebruikte variable terug roepen om eventueel een extra algoritme te maken
     return feedbck
 
 def aibraincode(mainlist):
@@ -55,11 +60,11 @@ def aibraincode(mainlist):
     for i in range(len(mainlist)):
         AITestuitkomst = ControlleCode(mainlist[i])
         if (AITestuitkomst != GokUitkomst):
+            #Alle elementen die niet de zelfde score hebben vervangen door lege strings
             mainlist[i] = ""
-
     while '' in mainlist:
+        #het verwijderen van lege strings
         mainlist.remove('')
-
     return mainlist
 
 def endgame():
@@ -83,7 +88,6 @@ def listmaken():
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      Setup     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
 #Global var
-
 AantalKleuren = 5  #maximaal 6
 ListKleurenNamen = ["zwart", "wit","groen","blauw","paars","rood"]
 Rondescount = 0
@@ -127,9 +131,7 @@ else:
     GlobalGamemastercode = PlayerCreateCode()
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~
-print(len(mainlist))
-ronde = 1
-
+print(len(mainlist))    #Debug print om te kijken of alle elementen toegevoegt zijn in de grote lijst
 #Start play loop
 #while Rondescount < AantalRondes:
 for i in range (0,AantalRondes):
@@ -141,7 +143,7 @@ for i in range (0,AantalRondes):
             print(mainlist[1])
             GokUitkomst = ControlleCode(mainlist[1])
             mainlist = aibraincode(mainlist)
-            print(len(mainlist))
+            print(len(mainlist)) #Debug print om de lengte van de lijst bij tehouden
             GameGokcode = mainlist[1]
             '''
             mainlist = aibraincode(mainlist)
