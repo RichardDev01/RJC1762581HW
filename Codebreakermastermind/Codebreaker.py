@@ -24,7 +24,31 @@ def PlayerCreateCode():
         Gamemastercode.append(ListKleurenNamen[int(input("Geef een nummer tussen de 0 en "+ str(AantalKleuren)+ " op: "))])
     return Gamemastercode
 
+def feedback(y, x):
+    blackpin = 0
+    whitepin = 0
+    gok = y.copy()
+    code = x.copy()
+
+    for i in range(len(x)):
+        if gok[i] == code[i]:
+            blackpin += 1
+            code[i] = 0
+            gok[i] = 1
+
+    for i2 in range(len(x)):
+        if gok[i2] != code[i2] and gok[i2] in code:
+            whitepin += 1
+            z = code.index(gok[i2])
+            code[z] = 0
+            gok[i2] = 1
+
+    pinnetjes = [blackpin, whitepin]
+    return pinnetjes
+
+
 def ControlleCode(gegokte_code):
+
     Blackpin = 0
     Whitepin = 0
     Collourblindpin = 0
@@ -41,8 +65,9 @@ def ControlleCode(gegokte_code):
             Whitepin -= 1
     if Whitepin < 0:
         Whitepin = 0
-
-    return [Blackpin, Whitepin, Collourblindpin]
+    feedbck= [Blackpin, Whitepin]
+    return feedbck
+    #return [Blackpin, Whitepin, Collourblindpin]
 
 def ControlleCodeAIBrain(gegokte_code):
     Blackpin = 0
@@ -59,7 +84,9 @@ def ControlleCodeAIBrain(gegokte_code):
         if gegokte_code[i] == AIGokCodeComparator[i]:
             Blackpin += 1
             Whitepin -= 1
-    return [Blackpin, Whitepin, Collourblindpin]
+    feedbck = [Blackpin, Whitepin]
+    return feedbck
+    #return [Blackpin, Whitepin, Collourblindpin]
 
 def aibraincode(mainlist):
     '''
@@ -69,20 +96,24 @@ def aibraincode(mainlist):
     ailist = mainlist
     for i in range(len(ailist)):
         # print(mainlist[i],end= " ")
-        AITestuitkomst = ControlleCodeAIBrain(ailist[i])
+        #AITestuitkomst = ControlleCodeAIBrain(ailist[i])
+        AITestuitkomst = ControlleCode(ailist[i])
         #print(AITestuitkomst)
         # print(ControlleCodeAIBrain(mainlist[i]))
         #if (AITestuitkomst[2] < GokUitkomst[2]):
         #if (AITestuitkomst[0] < GokUitkomst[0] or GokUitkomst[1] >= AITestuitkomst[1]):
         #if (AITestuitkomst[0] < GokUitkomst[0] or GokUitkomst[1] > AITestuitkomst[1]):
-        if (AITestuitkomst[0] < GokUitkomst[0] or  GokUitkomst[1] < AITestuitkomst[1]):
+        #if (AITestuitkomst[0] < GokUitkomst[0] or  GokUitkomst[1] < AITestuitkomst[1]):
+        #if (AITestuitkomst != GokUitkomst):
+        if (AITestuitkomst != GokUitkomst):
         #if (AITestuitkomst[0] < GokUitkomst[0]) or (AITestuitkomst[1] < GokUitkomst[1]):
             # AIChoiceslist.append(mainlist[i])
             mainlist[i] = ""
 
     while '' in mainlist:
-        ailist.remove('')
+        mainlist.remove('')
     return ailist
+
 
 def endgame():
     print(Totaleronde3dlist[Rondescount])
@@ -118,7 +149,7 @@ AICreateCodeBool = True
 #AICreateCodeBool = False
 
 #keuze van algoritme, 0 = puur random, 1= interpertatie van broncode
-AIKeuzeAlg = 0
+AIKeuzeAlg = 1
 
 #AI keuze Game gokcode code
 AIGokCodeBool = True
@@ -151,8 +182,9 @@ print(len(mainlist))
 ronde = 1
 
 mainlist = aibraincode(mainlist)
+
 GokUitkomst = ControlleCode(mainlist[1])
-mainlist = aibraincode(mainlist)
+#mainlist = aibraincode(mainlist)
 
 #Start play loop
 while Rondescount < AantalRondes:
@@ -161,9 +193,17 @@ while Rondescount < AantalRondes:
             GlobalGokcode = AIGokCode()
             GlobalAwsPin = ControlleCode(GlobalGokcode)
         elif AIKeuzeAlg== 1:
+
+            mainlist = aibraincode(mainlist)
+
+            GokUitkomst = ControlleCode(mainlist[1])
+            GameGokcode = mainlist[random.randrange(len(mainlist))]
+            '''
             mainlist = aibraincode(mainlist)
             GameGokcode = mainlist[random.randrange(len(mainlist))]
             GokUitkomst = ControlleCode(GameGokcode)
+            '''
+
             print(GokUitkomst)
             print(len(mainlist))
             GlobalAwsPin = GokUitkomst
@@ -180,10 +220,11 @@ while Rondescount < AantalRondes:
     Totaleronde3dlist[Rondescount].append([GlobalAwsPin])
 
     #Als er 4 zwarte pinnen tussendoor zijn stopt de game
-    if GlobalAwsPin[0] == 4:
+    if GameGokcode == GlobalGamemastercode:
+    #if GlobalAwsPin[0] == 4:
         endgame()
     Rondescount += 1
-print(Totaleronde3dlist)
+#print(Totaleronde3dlist)
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      Debug     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 #debugprint()
 

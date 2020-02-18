@@ -72,7 +72,8 @@ def ControlleCode(gegokte_code):
       '''
     if Whitepin <0:
         Whitepin = 0
-    return [Blackpin,Whitepin,Collourblindpin]
+    return [Blackpin, Whitepin]
+    #return [Blackpin,Whitepin,Collourblindpin]
 
 def ControlleCodeAIBrain(gegokte_code):
     '''De witte pin correctie werkt niet 100% maar dar maakt in deze keuze niet uit behalve effiecnietie'''
@@ -121,7 +122,8 @@ def ControlleCodeAIBrain(gegokte_code):
             continue
         continue
     '''
-    return [Blackpin,Whitepin,Collourblindpin]
+    return [Blackpin,Whitepin]
+    #return [Blackpin, Whitepin, Collourblindpin]
 
 def aibraincode(mainlist):
     ailist = mainlist
@@ -133,7 +135,8 @@ def aibraincode(mainlist):
         #if (AITestuitkomst[2] < GokUitkomst[2]):
         #if (AITestuitkomst[0] < GokUitkomst[0] or GokUitkomst[1] >= AITestuitkomst[1]):
         #if (AITestuitkomst[0] < GokUitkomst[0] or GokUitkomst[1] > AITestuitkomst[1]):
-        if (AITestuitkomst[0] < GokUitkomst[0] or  GokUitkomst[1] < AITestuitkomst[1]):
+        #if (AITestuitkomst[0] < GokUitkomst[0] or  GokUitkomst[1] < AITestuitkomst[1]):
+        if (AITestuitkomst != GokUitkomst):
         #if (AITestuitkomst[0] < GokUitkomst[0]) or (AITestuitkomst[1] < GokUitkomst[1]):
             # AIChoiceslist.append(mainlist[i])
             mainlist[i] = ""
