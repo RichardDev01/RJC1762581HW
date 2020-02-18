@@ -131,11 +131,9 @@ for i in range (0,AantalRondes):
             GlobalAwsPin = ControlleCode(GlobalGokcode)
         elif AIKeuzeAlg== 1:
             print(mainlist[1])
-
             GokUitkomst = ControlleCode(mainlist[1])
             mainlist = aibraincode(mainlist)
             GameGokcode = mainlist[1]
-            mainlist.pop(1)
             '''
             mainlist = aibraincode(mainlist)
             GameGokcode = mainlist[random.randrange(len(mainlist))]
