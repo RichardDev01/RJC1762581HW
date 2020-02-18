@@ -68,17 +68,13 @@ def aibraincode(mainlist):
     return mainlist
 
 def endgame():
+    #functie om het spel af tesluiten
     print(Totaleronde3dlist[Rondescount])
     print("U heeft gewonnen")
     quit()
 
-def debugprint():
-    print("De GlobalGamemastercode =", GlobalGamemastercode)
-    print("De GlobalGokcode =", GlobalGokcode)
-    print("Het aantal zwarte pinnen zijn",GlobalAwsPin[0], 'Het aantal witte pinnen zijn',GlobalAwsPin[1])
-    return
-
 def listmaken():
+    #Het gebruik van itertools om een lijst te vullen met variabelen. zie bronnen bovenin
     result = itertools.product(ListKleurenNamen, repeat=4)
     mainlist = []
     for item in result:
@@ -86,7 +82,6 @@ def listmaken():
     return mainlist
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      Setup     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-
 #Global var
 AantalKleuren = 5  #maximaal 6
 ListKleurenNamen = ["zwart", "wit","groen","blauw","paars","rood"]
@@ -145,6 +140,7 @@ for i in range (0,AantalRondes):
             mainlist = aibraincode(mainlist)
             print(len(mainlist)) #Debug print om de lengte van de lijst bij tehouden
             GameGokcode = mainlist[1]
+            mainlist.pop(1)
             '''
             mainlist = aibraincode(mainlist)
             GameGokcode = mainlist[random.randrange(len(mainlist))]
@@ -171,10 +167,7 @@ for i in range (0,AantalRondes):
         endgame()
     Rondescount += 1
 
-#print(Totaleronde3dlist)
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      Debug     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-#debugprint()
-
 print("Deze ronde heeft de volgende list",Rondelist1)
 print("Deze ronde heeft de volgende list",Rondelist2)
 print("Deze ronde heeft de volgende list",Rondelist3)
