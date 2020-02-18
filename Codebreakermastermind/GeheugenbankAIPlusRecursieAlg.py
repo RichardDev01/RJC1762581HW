@@ -1,4 +1,7 @@
 '''
+
+Isolatie van de AI laten werken in de list (oude code)
+
 https://www.youtube.com/watch?v=Qu3dThVy6KQ
 https://github.com/CoreyMSchafer/code_snippets/tree/master/Python/Itertools
 https://docs.python.org/2/library/itertools.html

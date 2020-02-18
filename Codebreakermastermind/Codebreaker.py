@@ -83,11 +83,11 @@ def listmaken():
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      Setup     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 #Global var
-AantalKleuren = 5  #maximaal 6
+AantalKleuren = 5  #maximaal 6 (of lengte listkleurennamen)
 ListKleurenNamen = ["zwart", "wit","groen","blauw","paars","rood"]
 Rondescount = 0
 AantalRondes = 10   #normaal 10 maar kan minder
-Totaleronde3dlist = [[] ,[] ,[],[],[],[],[],[],[],[]]
+Totaleronde3dlist = [[] ,[] ,[],[],[],[],[],[],[],[]]   #het maken van 1 list met de gok pogingen
 Rondelist1 = Totaleronde3dlist[0]
 Rondelist2 = Totaleronde3dlist[1]
 Rondelist3 = Totaleronde3dlist[2]
@@ -134,17 +134,17 @@ for i in range (0,AantalRondes):
             GlobalGokcode = AIGokCode() #Random code ophalen
             GlobalAwsPin = ControlleCode(GlobalGokcode)     #gok maken en feedback opvragen
         elif AIKeuzeAlg== 1:
-            print(mainlist[1])
-            GokUitkomst = ControlleCode(mainlist[1])
+            print(mainlist[0])
+            GokUitkomst = ControlleCode(mainlist[0])
             GlobalAwsPin = GokUitkomst
 
             mainlist = aibraincode(mainlist)
             print(len(mainlist)) #Debug print om de lengte van de lijst bij tehouden
 
-            GameGokcode = mainlist[1]
+            GameGokcode = mainlist[0]
             GlobalGokcode = GameGokcode
 
-            mainlist.pop(1) #Verwijderen van het element dat is gebruikt voor de gok
+            mainlist.pop(0) #Verwijderen van het element dat is gebruikt voor de gok
             
             print(GokUitkomst)
             print(len(mainlist))

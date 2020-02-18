@@ -1,4 +1,7 @@
 '''
+
+Eerste poging met oude controlle code om de basis correct te krijgen
+
 https://www.youtube.com/watch?v=Qu3dThVy6KQ
 https://github.com/CoreyMSchafer/code_snippets/tree/master/Python/Itertools
 https://docs.python.org/2/library/itertools.html
