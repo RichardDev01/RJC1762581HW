@@ -10,7 +10,7 @@ https://github.com/CoreyMSchafer/code_snippets/tree/master/Python/Itertools
 https://docs.python.org/2/library/itertools.html
 '''
 import random
-import  itertools
+import itertools
 
 def AICreateCode():
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      Dit is een random nummer gokker met geen logica     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
@@ -31,6 +31,14 @@ def PlayerCreateCode():
     while len(Gamemastercode) < AantalKleuren-1:
         Gamemastercode.append(ListKleurenNamen[int(input("Geef een nummer tussen de 0 en "+ str(AantalKleuren)+ " op: "))])
     return Gamemastercode
+
+def listmaken():
+    #Het gebruik van itertools om een lijst te vullen met variabelen. zie bronnen bovenin
+    result = itertools.product(ListKleurenNamen, repeat=4)
+    mainlist = []
+    for item in result:
+        mainlist.append(list(item))
+    return mainlist
 
 def ControlleCode(gegokte_code):
     Blackpin = 0
@@ -78,13 +86,7 @@ def endgame():
     print("U heeft gewonnen")
     quit()
 
-def listmaken():
-    #Het gebruik van itertools om een lijst te vullen met variabelen. zie bronnen bovenin
-    result = itertools.product(ListKleurenNamen, repeat=4)
-    mainlist = []
-    for item in result:
-        mainlist.append(list(item))
-    return mainlist
+
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      Setup     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 #Global var
