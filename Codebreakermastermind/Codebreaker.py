@@ -8,6 +8,8 @@ import random
 import  itertools
 
 def AICreateCode():
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      Dit is een random nummer gokker met geen logica     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      GameGokcode moet een list van 4 elementen zijn      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
     Gamemastercode = [ListKleurenNamen[random.randrange(AantalKleuren)],ListKleurenNamen[random.randrange(AantalKleuren)],ListKleurenNamen[random.randrange(AantalKleuren)],ListKleurenNamen[random.randrange(AantalKleuren)]]
     print("De Gamemastercode is", Gamemastercode)
     return Gamemastercode
@@ -19,13 +21,13 @@ def AIGokCode():
     return GameGokcode
 
 def PlayerCreateCode():
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      Code voor het opvragen van de speler zijn oode    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
     Gamemastercode = []
     while len(Gamemastercode) < AantalKleuren-1:
         Gamemastercode.append(ListKleurenNamen[int(input("Geef een nummer tussen de 0 en "+ str(AantalKleuren)+ " op: "))])
     return Gamemastercode
 
 def ControlleCode(gegokte_code):
-
     Blackpin = 0
     Whitepin = 0
     Collourblindpin = 0
@@ -71,6 +73,13 @@ def debugprint():
     print("Het aantal zwarte pinnen zijn",GlobalAwsPin[0], 'Het aantal witte pinnen zijn',GlobalAwsPin[1])
     return
 
+def listmaken():
+    result = itertools.product(ListKleurenNamen, repeat=4)
+    mainlist = []
+    for item in result:
+        mainlist.append(list(item))
+    return mainlist
+
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      Setup     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
 #Global var
@@ -108,10 +117,8 @@ GlobalAwsPin = []
 DefaultGokCode = [ListKleurenNamen[0], ListKleurenNamen[0], ListKleurenNamen[1], ListKleurenNamen[1]]
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      Code voor het maken van een geheugen bank     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-result = itertools.product(ListKleurenNamen, repeat=4)
-mainlist = []
-for item in result:
-    mainlist.append(list(item))
+mainlist = listmaken()
+
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      Mainloop     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 # Het maken van de gamemastercode
 if AICreateCodeBool == True:
