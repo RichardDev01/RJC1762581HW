@@ -1,3 +1,8 @@
+# Keep it simple stupid. Simpler is always better. Reduce complexity as much as possible.
+# Always find root cause. Always look for the root cause of a problem.
+# Use pronounceable names. Have no side effects. Prefer data structures.
+# Similar functions should be close.
+#
 '''
 Sources voor uitleg over itertools;
 https://www.youtube.com/watch?v=Qu3dThVy6KQ
