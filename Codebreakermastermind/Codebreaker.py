@@ -67,6 +67,7 @@ def ControlleCode(gegokte_code):
 
 def aibraincode(mainlist):
     '''
+    extra parameter voor code die gecheckt moeten worden
     De code hieronder controleerd elke uitkomst van de geheugen bank met de voorgaanden uitkomst om alles er uit tefilteren wat slechter is door dat element in de list te vervangen met een "".
     Aan het einde van de functie word leeg element verwijderd uit de lijst om alleen nog maar de meest correcte combinaties over tehouden.
     '''
