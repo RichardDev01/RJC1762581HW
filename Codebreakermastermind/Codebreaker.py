@@ -84,9 +84,9 @@ def ControlleCode(gegokte_code, targetcode):
 
 def aibraincode(mainlist, gokresultaat, controlecode):
     '''
-    extra parameter voor code die gecheckt moeten worden
     De code hieronder controleerd elke uitkomst van de geheugen bank met de voorgaanden uitkomst om alles er uit tefilteren wat slechter is door dat element in de list te vervangen met een "".
     Aan het einde van de functie word leeg element verwijderd uit de lijst om alleen nog maar de meest correcte combinaties over tehouden.
+    Hier wordt de eerste simpele methode toegepast volgens het artikel
     '''
     for i in range(len(mainlist)):
         ai_testuitkomst = ControlleCode(mainlist[i], controlecode)
@@ -101,7 +101,6 @@ def aibraincode(mainlist, gokresultaat, controlecode):
 
 def endgame(win, maxrondes):
     # functie om het spel af tesluiten
-    # print(Totaleronde3dlist)
     if maxrondes == True:
         print("Er zijn geen beurten meer over :c")
         quit()
