@@ -49,8 +49,7 @@ def ControlleCode(gegokte_code, kraakcode):
         # van alle overeenkosmten bepalen hoeveel witte pinnen er moeten zijn (ook zwarte pinnen zijn nog wit)
         if GlobalGamemastercode.count(i) <= gegokte_code.count(i):
             Whitepin += GlobalGamemastercode.count(i)
-            Collourblindpin += GlobalGamemastercode.count(
-                i)  # niet gebruikte variable, overgebleven van een eventuele optie voor anderen algoritme die alleen kijkt of er pinnen zijn
+            Collourblindpin += GlobalGamemastercode.count(i)  # niet gebruikte variable, overgebleven van een eventuele optie voor anderen algoritme die alleen kijkt of er pinnen zijn
     for i in range(len(gegokte_code)):
         # het eventueel omzetten van witte pinnen naar zwarte pinnen
         if gegokte_code[i] == GlobalGamemastercode[i]:

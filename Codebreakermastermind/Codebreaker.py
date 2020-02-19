@@ -40,23 +40,25 @@ def listmaken():
         mainlist.append(list(item))
     return mainlist
 
-def ControlleCode(gegokte_code):
+def ControlleCode(gegokte_code, targetcode):
+    #Gegokte code is de code die je toeleverd en de targetcode is de code waar je naar toe vergelijkt
     Blackpin = 0
     Whitepin = 0
     Collourblindpin = 0
 
     #Het omzetten van list naar sets om de overeenkomsten te isoleren
-    set1 = set(GlobalGamemastercode)
+    #set1 = set(GlobalGamemastercode)
+    set1 = set(targetcode)
     set2 = set(gegokte_code)
     list3 = list(set1 & set2)
     for i in list3:
         # van alle overeenkosmten bepalen hoeveel witte pinnen er moeten zijn (ook zwarte pinnen zijn nog wit)
-        if GlobalGamemastercode.count(i) <= gegokte_code.count(i):
-            Whitepin += GlobalGamemastercode.count(i)
-            Collourblindpin += GlobalGamemastercode.count(i)    #niet gebruikte variable, overgebleven van een eventuele optie voor anderen algoritme die alleen kijkt of er pinnen zijn
+        if targetcode.count(i) <= gegokte_code.count(i):
+            Whitepin += targetcode.count(i)
+            Collourblindpin += targetcode.count(i)    #niet gebruikte variable, overgebleven van een eventuele optie voor anderen algoritme die alleen kijkt of er pinnen zijn
     for i in range(len(gegokte_code)):
         #het eventueel omzetten van witte pinnen naar zwarte pinnen
-        if gegokte_code[i] == GlobalGamemastercode[i]:
+        if gegokte_code[i] == targetcode[i]:
             Blackpin += 1
             Whitepin -= 1
     if Whitepin < 0:
@@ -65,15 +67,16 @@ def ControlleCode(gegokte_code):
     #feedbck= [Blackpin, Whitepin,Collourblindpin] #ongebruikte variable terug roepen om eventueel een extra algoritme te maken
     return feedbck
 
-def aibraincode(mainlist):
+def aibraincode(mainlist, gokresultaat, controlecode):
     '''
     extra parameter voor code die gecheckt moeten worden
     De code hieronder controleerd elke uitkomst van de geheugen bank met de voorgaanden uitkomst om alles er uit tefilteren wat slechter is door dat element in de list te vervangen met een "".
     Aan het einde van de functie word leeg element verwijderd uit de lijst om alleen nog maar de meest correcte combinaties over tehouden.
     '''
     for i in range(len(mainlist)):
-        AITestuitkomst = ControlleCode(mainlist[i])
-        if (AITestuitkomst != GokUitkomst):
+        #AITestuitkomst = ControlleCode(mainlist[i], GlobalGamemastercode)
+        AITestuitkomst = ControlleCode(mainlist[i], controlecode)
+        if (AITestuitkomst != gokresultaat):
             #Alle elementen die niet de zelfde score hebben vervangen door lege strings
             mainlist[i] = ""
     while '' in mainlist:
@@ -81,12 +84,17 @@ def aibraincode(mainlist):
         mainlist.remove('')
     return mainlist
 
-def endgame():
+def endgame(win):
     #functie om het spel af tesluiten
-    print(Totaleronde3dlist[Rondescount])
-    print("U heeft gewonnen")
-    quit()
-
+    #print(Totaleronde3dlist)
+    if win == True:
+        print("U heeft gewonnen")
+        for i in Totaleronde3dlist:
+            print(i)
+        quit()
+    else:
+        print("De AI heeft geen idee voor antwoord :c")
+        quit()
 
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      Setup     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
@@ -140,21 +148,20 @@ for i in range (0,AantalRondes):
     if AIGokCodeBool == True:
         if AIKeuzeAlg == 0:
             GlobalGokcode = AIGokCode() #Random code ophalen
-            GlobalAwsPin = ControlleCode(GlobalGokcode)     #gok maken en feedback opvragen
+            GlobalAwsPin = ControlleCode(GlobalGokcode,0)     #gok maken en feedback opvragen
         elif AIKeuzeAlg== 1:
-            print(mainlist[0])
-            GokUitkomst = ControlleCode(mainlist[0])
+            #print(mainlist[0])
+            if len(mainlist) == 0:
+                endgame(False)
+            else:
+                controllecode = mainlist[0]
+            GokUitkomst = ControlleCode(mainlist[0],GlobalGamemastercode)
             GlobalAwsPin = GokUitkomst
 
-            mainlist = aibraincode(mainlist)
-            print(len(mainlist)) #Debug print om de lengte van de lijst bij tehouden
+            mainlist = aibraincode(mainlist,GokUitkomst,controllecode)
 
-            GameGokcode = mainlist[0]
+            GameGokcode = controllecode
             GlobalGokcode = GameGokcode
-
-            mainlist.pop(0) #Verwijderen van het element dat is gebruikt voor de gok
-            
-            print(GokUitkomst)
             print(len(mainlist))
         elif AIKeuzeAlg == 3:
             print("Ai placeholder nmr3")
@@ -169,17 +176,8 @@ for i in range (0,AantalRondes):
 
     #Als er 4 zwarte pinnen tussendoor zijn stopt de game
     if GameGokcode == GlobalGamemastercode:
-        endgame()
+        endgame(True)
     Rondescount += 1
+endgame(False)
 
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~      Debug     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-print("Deze ronde heeft de volgende list",Rondelist1)
-print("Deze ronde heeft de volgende list",Rondelist2)
-print("Deze ronde heeft de volgende list",Rondelist3)
-print("Deze ronde heeft de volgende list",Rondelist4)
-print("Deze ronde heeft de volgende list",Rondelist5)
-print("Deze ronde heeft de volgende list",Rondelist6)
-print("Deze ronde heeft de volgende list",Rondelist7)
-print("Deze ronde heeft de volgende list",Rondelist8)
-print("Deze ronde heeft de volgende list",Rondelist9)
-print("Deze ronde heeft de volgende list",Rondelist10)
+
