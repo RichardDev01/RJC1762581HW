@@ -24,6 +24,16 @@ cur = conn.cursor()
 # Pass data to fill a query placeholders and let Psycopg perform
 # the correct conversion (no more SQL injections!)
 
+cur.execute("DROP TABLE IF EXISTS recomendedpro;")
+
+cur.execute("CREATE TABLE recomendedpro (id serial  PRIMARY KEY, "
+            "_ID varchar , "
+            "category varchar, "
+            "sub_category varchar, "
+            "targetaudience varchar, "
+            "sellingprice varchar, "
+            "deal varchar);")
+
 
 # Query the database and obtain data as Python objects
 #cur.execute("SELECT * FROM products;")
