@@ -6,8 +6,18 @@ import psycopg2
 
 def recomendeditems(category,subcategory,targetaudience):
     #Hier maak ik gebruik van een SQL statement die in mijn Recomended items table alleen maar de producten hallen die overeen komen de gegeven category, subcategory en target audience(kunnen maximaal 5 items zijn*)
-    cur.execute("select recomendedpro._id, recomendedpro.category, recomendedpro.sub_category, recomendedpro.targetaudience from recomendedpro  where category = '{}'and sub_category = '{}' and targetaudience = '{}'".format(category,subcategory,targetaudience))
+
+    #Ik moest verschillenden entries aanpassen omdat ze niet 1 op 1 in sql konden, hier onder worden de strings aangepast zodat ze werken in SQL
+    if targetaudience == "Baby's":
+        targetaudience = "Baby\''s"
+    if subcategory == "Baby's en kinderen":
+        subcategory = "Baby\''s en kinderen"
+    if category == "['Make-up & geuren', 'Make-up', 'Nagellak']":
+        category ="[\''Make-up & geuren\'', \''Make-up\'', \''Nagellak\'']"
+
+    cur.execute("select recomendedpro._id, recomendedpro.category, recomendedpro.sub_category, recomendedpro.targetaudience from recomendedpro  where category = '{}'and sub_category = '{}' and targetaudience = '{}'".format(category, subcategory, targetaudience))
     info = cur.fetchall()
+
     return info
 
 def createrecomendeditemstable():
@@ -130,9 +140,48 @@ def fillrecomendeditems(categorylst,subcategorylst,genderlst):
 
 def getitemrecords(id):
     #het ophalen van de prodcuct gegevens met een query
+    #filter voor een specifieke record
+    if id == "38647-It'sglowtime":
+        id = "38647-It\''sglowtime"
     cur.execute("select products.id, products.category, products.subcategory, products.targetaudience from products where id = '{}'".format(id))
     info = cur.fetchall()
     return info
+
+def createidlink():
+    #een functie om een tabel aan temaken
+    cur.execute("DROP TABLE IF EXISTS prolink;")
+
+    cur.execute("CREATE TABLE prolink (PID varchar  PRIMARY KEY, "
+                "pro1 varchar, "
+                "pro2 varchar, "
+                "pro3 varchar, "
+                "pro4 varchar, "
+                "pro5 varchar);")
+    return
+
+def fillidlinktable():
+    #Deze functie itereerd over alle items die er zijn en verwerkt alleproducten in een nieuwe tabel met de recommended items erbij
+    cur.execute("select products.id from products")
+    ids = cur.fetchall()
+
+    for id in ids:
+        itemrecords = getitemrecords(id[0])
+        recomendedlist = recomendeditems(itemrecords[0][1], itemrecords[0][2], itemrecords[0][3])
+        print("list met recomende id's", [i[0] for i in recomendedlist])
+        if len(recomendedlist) == 5:
+            cur.execute("INSERT INTO prolink (PID, pro1, pro2, pro3,pro4,pro5) VALUES ( %s, %s, %s, %s,%s,%s)",(id, recomendedlist[0][0], recomendedlist[1][0], recomendedlist[2][0],recomendedlist[3][0],recomendedlist[4][0]))
+        if len(recomendedlist) == 4:
+            cur.execute("INSERT INTO prolink (PID, pro1, pro2, pro3,pro4) VALUES ( %s, %s, %s, %s,%s)",(id, recomendedlist[0][0], recomendedlist[1][0], recomendedlist[2][0],recomendedlist[3][0]))
+        if len(recomendedlist) == 3:
+            cur.execute("INSERT INTO prolink (PID, pro1, pro2, pro3) VALUES ( %s, %s, %s, %s)",(id, recomendedlist[0][0], recomendedlist[1][0], recomendedlist[2][0]))
+        if len(recomendedlist) == 2:
+            cur.execute("INSERT INTO prolink (PID, pro1, pro2) VALUES ( %s, %s, %s)",(id, recomendedlist[0][0], recomendedlist[1][0]))
+        if len(recomendedlist) == 1:
+            cur.execute("INSERT INTO prolink (PID, pro1) VALUES ( %s, %s)",(id, recomendedlist[0][0]))
+        if len(recomendedlist) == 0:
+            cur.execute("INSERT INTO prolink (PID) VALUES ( %s)",(id))
+
+    return
 
 conn = psycopg2.connect("dbname=voordeelopdracht user=postgres password=kip")
 cur = conn.cursor()
@@ -143,12 +192,9 @@ searchitems = createrecomendeditemsrecords()
 
 fillrecomendeditems(searchitems[0],searchitems[1],searchitems[2])
 
-itemrecords = getitemrecords(9196)   #Het gene wat hier in haakjes staat
-print("Het ingevulde ID", itemrecords[0][0])
-recomendedlist = recomendeditems(itemrecords[0][1],itemrecords[0][2],itemrecords[0][3])
+createidlink()
 
-#Deze for statement is zeer handig en heb ik van: https://stackoverflow.com/questions/30062429/python-how-to-get-every-first-element-in-2-dimensional-list/30062458
-print("list met recomende id's",[i[0] for i in recomendedlist])
+fillidlinktable()
 
 # Make the changes to the database persistent
 conn.commit()
