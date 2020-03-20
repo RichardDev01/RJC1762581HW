@@ -1,12 +1,10 @@
 #https://www.jetbrains.com/help/pycharm/installing-uninstalling-and-upgrading-packages.html
 #https://api.mongodb.com/python/current/tutorial.html
 #https://www.psycopg.org/docs/usage.html
-
 import psycopg2
 
 def recomendeditems(category,subcategory,targetaudience):
     #Hier maak ik gebruik van een SQL statement die in mijn Recomended items table alleen maar de producten hallen die overeen komen de gegeven category, subcategory en target audience(kunnen maximaal 5 items zijn*)
-
     #Ik moest verschillenden entries aanpassen omdat ze niet 1 op 1 in sql konden, hier onder worden de strings aangepast zodat ze werken in SQL
     if targetaudience == "Baby's":
         targetaudience = "Baby\''s"
@@ -161,13 +159,13 @@ def createidlink():
 
 def fillidlinktable():
     #Deze functie itereerd over alle items die er zijn en verwerkt alleproducten in een nieuwe tabel met de recommended items erbij
-    cur.execute("select products.id from products")
+    cur.execute("select products.id from products limit 30")
     ids = cur.fetchall()
 
     for id in ids:
         itemrecords = getitemrecords(id[0])
         recomendedlist = recomendeditems(itemrecords[0][1], itemrecords[0][2], itemrecords[0][3])
-        print("list met recomende id's", [i[0] for i in recomendedlist])
+        #print("list met recomende id's", [i[0] for i in recomendedlist])
         if len(recomendedlist) == 5:
             cur.execute("INSERT INTO prolink (PID, pro1, pro2, pro3,pro4,pro5) VALUES ( %s, %s, %s, %s,%s,%s)",(id, recomendedlist[0][0], recomendedlist[1][0], recomendedlist[2][0],recomendedlist[3][0],recomendedlist[4][0]))
         if len(recomendedlist) == 4:
@@ -180,12 +178,62 @@ def fillidlinktable():
             cur.execute("INSERT INTO prolink (PID, pro1) VALUES ( %s, %s)",(id, recomendedlist[0][0]))
         if len(recomendedlist) == 0:
             cur.execute("INSERT INTO prolink (PID) VALUES ( %s)",(id))
+    print("finnisched filling product table")
+    return
 
+
+def getsegmenttypes():
+    #Hier heb ik een stukje code om ale segments te fetchen en te verwerken zodat ik mijn code zo flexibel mogelijk heb
+    #ik heb hier de records op maximaal 10000 staan vanwegen snelheid
+    segmentdict= {}
+    cur.execute("select sessions.profid, sessions.segment,sessions.sale,profiles_previously_viewed.prodid, products.category, products.subcategory, products.targetaudience from sessions right JOIN profiles_previously_viewed ON sessions.profid=profiles_previously_viewed.profid right JOIN products ON products.id=profiles_previously_viewed.prodid limit 10000")
+    getsegments= cur.fetchall()
+    #print(getsegments)
+    for segment in getsegments:
+        #print(segment[1])
+        if segment[1] in segmentdict:
+            segmentdict[segment[1]] += 1
+        else:
+            segmentdict[segment[1]] = 1
+
+    #Het aanmaken van een tabel voor het uiteindelijk resultaat
+    cur.execute("DROP TABLE IF EXISTS segmenttocat; CREATE TABLE segmenttocat (segment VARCHAR, category VARCHAR, PRIMARY KEY (segment)); ")
+    #Hier maak ik gebruik van een sql statement om een nieuwe table aan temaken om me verder tewerken voor de gemakelijkheid
+    cur.execute("DROP TABLE IF EXISTS combindedsession; CREATE TABLE combindedsession AS select sessions.profid, sessions.segment,sessions.sale,profiles_previously_viewed.prodid, products.category, products.subcategory, products.targetaudience from sessions  right JOIN profiles_previously_viewed ON sessions.profid=profiles_previously_viewed.profid right JOIN products ON products.id=profiles_previously_viewed.prodid order by prodid asc limit 10000;")
+
+    i=0
+    for keys in segmentdict.keys():
+
+        maxrecord = {}
+        cur.execute("Select distinct prodid from combindedsession where segment = '{}'".format(list(segmentdict.keys())[i]))
+        products = cur.fetchall()
+        for producten in products:
+
+            #Ik maak gebruik van de eigenschappen van een dictionaire om de records te tellen zodat ik weet wat een segments het meeste koopt en daarop kan baseren wat hij/zij aangeraden moet krijgen
+            record = getitemrecords(producten[0])[0][1]
+            if record in maxrecord:
+                maxrecord[record] += 1
+            else:
+                maxrecord[record] = 1
+
+        v = list(maxrecord.values())
+        k = list(maxrecord.keys())
+        #door onregelmatige data kan het voorkomen dat het niet altijd goed gaat, daarm een try except
+        try:
+            mostcat = k[v.index(max(v))]
+        except:
+            i += 1
+            continue
+        cur.execute("INSERT INTO segmenttocat (segment,category) VALUES ( %s,%s)", (keys,mostcat))
+        i+=1
+
+    print("finished maken segment to category")
     return
 
 conn = psycopg2.connect("dbname=voordeelopdracht user=postgres password=kip")
 cur = conn.cursor()
 
+#~~~~~~~~~~~~~~~~~~~~~~~~ code voor product koppeling
 createrecomendeditemstable()
 
 searchitems = createrecomendeditemsrecords()
@@ -195,6 +243,9 @@ fillrecomendeditems(searchitems[0],searchitems[1],searchitems[2])
 createidlink()
 
 fillidlinktable()
+
+#~~~~~~~~~~~~~~~~~~~~~~~~ code voor profil koppeling
+getsegmenttypes()
 
 # Make the changes to the database persistent
 conn.commit()

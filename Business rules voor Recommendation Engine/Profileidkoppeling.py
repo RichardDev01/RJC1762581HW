@@ -6,3 +6,14 @@ right JOIN products ON products.id=profiles_previously_viewed.prodid
 select products.id, products.category, products.subcategory, products.targetaudience, products.sellingprice, products.deal from products WHERE products.deal IS NOT NULL and products.category is not null
 order by category, subcategory, targetaudience,deal asc
 """
+import psycopg2
+
+
+
+
+
+
+
+
+conn = psycopg2.connect("dbname=voordeelopdracht user=postgres password=kip")
+cur = conn.cursor()
