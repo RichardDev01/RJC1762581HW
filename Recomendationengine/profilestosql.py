@@ -27,7 +27,7 @@ cur.execute("CREATE TABLE all_pro (_ID varchar PRIMARY KEY, "
 # Pass data to fill a query placeholders and let Psycopg perform
 # the correct conversion (no more SQL injections!)
 
-for i in profiles:
+for i in profiles[:10]:
     cur.execute("INSERT INTO all_pro (_ID, buids, recommendations, previously_recommended) VALUES (%s, %s, %s, %s)",
                 (str(i['_id']),
                  i['buids'] if 'buids' in i else None,

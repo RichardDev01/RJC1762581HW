@@ -3,7 +3,7 @@ from pymongo import MongoClient
 client = MongoClient('localhost', 27017)
 
 db = client.huwebshop
-conn = psycopg2.connect("dbname=voordeelshopgp user=postgres password=kip")
+conn = psycopg2.connect("dbname=testSQL2 user=postgres password=kip")
 cur = conn.cursor()
 
 cur.execute("DROP TABLE IF EXISTS all_p;")
@@ -49,7 +49,7 @@ for i in products:
         print(count)
 print("done with products")
 
-col = db.products
+col = db.profiles
 profiles = col.find()
 count =0
 for i in profiles:
@@ -77,7 +77,7 @@ for i in sessions:
     count +=1
     if count % 1000 == 0:
         print(count)
-print("doner with sessions")
+print("done with sessions")
 
 # Make the changes to the database persistent
 conn.commit()
