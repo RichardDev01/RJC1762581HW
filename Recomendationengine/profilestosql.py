@@ -22,16 +22,20 @@ cur.execute("DROP TABLE IF EXISTS all_pro;")
 cur.execute("CREATE TABLE all_pro (_ID varchar PRIMARY KEY, "
             "buids varchar,"
             "recommendations varchar, "
+            "segment varchar,"
             "previously_recommended varchar);")
 #cur.execute("CREATE TABLE test (id serial PRIMARY KEY, num integer, data varchar);")
 # Pass data to fill a query placeholders and let Psycopg perform
 # the correct conversion (no more SQL injections!)
 
-for i in profiles[:10]:
-    cur.execute("INSERT INTO all_pro (_ID, buids, recommendations, previously_recommended) VALUES (%s, %s, %s, %s)",
+print(profiles[1])
+
+for i in profiles[:1000]:
+    cur.execute("INSERT INTO all_pro (_ID, buids, recommendations, segment,previously_recommended) VALUES (%s, %s, %s, %s,%s)",
                 (str(i['_id']),
                  i['buids'] if 'buids' in i else None,
                  i['recommendations']['viewed_before'] if 'recommendations' in i else None,
+                 i['segment'] if 'segment' in i else None,
                  i['previously_recommended'] if 'previously_recommended' in i else None))
 #ID, category, brand, gender, sub category, sub sub category, color, name, price
 """

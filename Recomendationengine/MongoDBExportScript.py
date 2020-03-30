@@ -1,9 +1,9 @@
 import psycopg2
 from pymongo import MongoClient
-client = MongoClient('localhost', 27017)
+client = MongoClient('localhost', 27017)    #MongodB connectie
 
 db = client.huwebshop
-conn = psycopg2.connect("dbname=testSQL2 user=postgres password=kip")
+conn = psycopg2.connect("dbname=voordeelshopgp user=postgres password=kip")       #edit dit voor je eigen database
 cur = conn.cursor()
 
 cur.execute("DROP TABLE IF EXISTS all_p;")
@@ -46,7 +46,7 @@ for i in products:
                  i['brand'] if 'brand' in i else None))
     count +=1
     if count % 1000 == 0:
-        print(count)
+        print(count,"Products")
 print("done with products")
 
 col = db.profiles
@@ -59,7 +59,7 @@ for i in profiles:
                  i['recommendations']['viewed_before'] if 'recommendations' in i else None))
     count +=1
     if count % 1000 == 0:
-        print(count)
+        print(count,"Profiles")
 print("done with profiles")
 
 col = db.sessions
@@ -76,7 +76,7 @@ for i in sessions:
                  str(i['segment']) if 'segment' in i else None))
     count +=1
     if count % 1000 == 0:
-        print(count)
+        print(count,"Sessions")
 print("done with sessions")
 
 # Make the changes to the database persistent
