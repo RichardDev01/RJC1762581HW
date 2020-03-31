@@ -3,6 +3,7 @@
 #https://www.psycopg.org/docs/usage.html
 import psycopg2
 
+#not used
 def recomendeditems(category,subcategory,targetaudience):
     #Hier maak ik gebruik van een SQL statement die in mijn Recomended items table alleen maar de producten hallen die overeen komen de gegeven category, subcategory en target audience(kunnen maximaal 5 items zijn*)
     #Ik moest verschillenden entries aanpassen omdat ze niet 1 op 1 in sql konden, hier onder worden de strings aangepast zodat ze werken in SQL
@@ -18,6 +19,7 @@ def recomendeditems(category,subcategory,targetaudience):
 
     return info
 
+#not used
 def createrecomendeditemstable():
     #Deze functie maak een table aan voor mijn producten die ik wil laten zien
     cur.execute("DROP TABLE IF EXISTS recomendedpro;")
@@ -33,9 +35,11 @@ def createrecomendeditemstable():
 def createrecomendeditemsrecords():
     categorydict = {}
     subcategorydict = {}
+    subsubcategorydict = {}
+    branddict = {}
     genderdict = {}
     # met deze execute haal ik alle producten op die zowiezo een deal hebben en daarna haal ik ze gesoorteerd binnen
-    cur.execute("select products.id, products.category, products.subcategory, products.targetaudience, products.sellingprice, products.deal from products WHERE products.deal IS NOT NULL and products.category is not null order by category, subcategory, targetaudience,deal asc")
+    cur.execute("select all_p._id, all_p.category, all_p.sub_category, all_p.gender, all_p.sub_sub_category, all_p.brand,all_p.price, all_p.discount from all_p WHERE all_p.discount IS NOT NULL and all_p.category is not null order by category, sub_category, gender,discount asc")
     rows = cur.fetchall()
 
     for row in rows:
@@ -72,9 +76,33 @@ def createrecomendeditemsrecords():
         else:
             genderdict[row[3]] = 1
 
+        # een stukje code om alle subsubsubcategories uit de query te hallen en dit naar een dict te zetten zodat ik weet wat ik heb
+        if isinstance(row[[4][0]], str) == True:
+            if row[4] in subsubcategorydict:
+                subsubcategorydict[row[4]] += 1
+            else:
+                subsubcategorydict[row[4]] = 1
+        if row[4] in subsubcategorydict:
+            subsubcategorydict[row[4]] += 1
+        else:
+            subsubcategorydict[row[4]] = 1
+
+        # een stukje code om alle brands uit de query te hallen en dit naar een dict te zetten zodat ik weet wat ik heb
+        if isinstance(row[[5][0]], str) == True:
+            if row[5] in branddict:
+                branddict[row[5]] += 1
+            else:
+                branddict[row[5]] = 1
+        if row[5] in branddict:
+            branddict[row[5]] += 1
+        else:
+            branddict[row[5]] = 1
+
     #een stukje code om de keys van alles dicts om te zetten naar een list omdat ik dat makelijker werken vindt
     categorylst = []
     subcategorylst = []
+    subsubcategorylst = []
+    brandlst = []
     genderlst = []
     for keys in categorydict.keys():
         categorylst.append(keys)
@@ -82,12 +110,17 @@ def createrecomendeditemsrecords():
         subcategorylst.append(keys)
     for keys in genderdict.keys():
         genderlst.append(keys)
+    for keys in subsubcategorydict.keys():
+        subsubcategorylst.append(keys)
+    for keys in branddict.keys():
+        brandlst.append(keys)
 
     #return alle list zodat ik ze ergens anders kan gebruiken in anderen stukken code voor flexibiliteit
-    return categorylst,subcategorylst,genderlst
+    return categorylst,subcategorylst,genderlst,subsubcategorylst,brandlst
 
+#not used
 def fillrecomendeditems(categorylst,subcategorylst,genderlst):
-    cur.execute("select products.id, products.category, products.subcategory, products.targetaudience, products.sellingprice, products.deal from products WHERE products.deal IS NOT NULL and products.category is not null order by category, subcategory, targetaudience,deal asc")
+    cur.execute("select all_p._id, all_p.category, all_p.sub_category, all_p.gender, all_p.price, all_p.discount from all_p WHERE all_p.discount IS NOT NULL and all_p.category is not null order by category, sub_category, gender,discount asc")
     rows = cur.fetchall()
     #in dit stukje code maak ik per subcategory een selectie van 5 items per target/gender en schrijf dit weg naar de database
     for j in range(0, len(subcategorylst)):
@@ -136,15 +169,17 @@ def fillrecomendeditems(categorylst,subcategorylst,genderlst):
 
     return
 
+#not used
 def getitemrecords(id):
     #het ophalen van de prodcuct gegevens met een query
     #filter voor een specifieke record
     if id == "38647-It'sglowtime":
         id = "38647-It\''sglowtime"
-    cur.execute("select products.id, products.category, products.subcategory, products.targetaudience from products where id = '{}'".format(id))
+    cur.execute("select all_p._id, all_p.category, all_p.sub_category, all_p.gender from all_p where _id = '{}'".format(id))
     info = cur.fetchall()
     return info
 
+#not used
 def createidlink():
     #een functie om een tabel aan temaken
     cur.execute("DROP TABLE IF EXISTS prolink;")
@@ -156,10 +191,10 @@ def createidlink():
                 "pro4 varchar, "
                 "pro5 varchar);")
     return
-
+#not used
 def fillidlinktable():
     #Deze functie itereerd over alle items die er zijn en verwerkt alleproducten in een nieuwe tabel met de recommended items erbij
-    cur.execute("select products.id from products limit 30")
+    cur.execute("select all_p._id from all_p")
     ids = cur.fetchall()
 
     for id in ids:
@@ -181,7 +216,7 @@ def fillidlinktable():
     print("finnisched filling product table")
     return
 
-
+#not used
 def getsegmenttypes():
     #Hier heb ik een stukje code om ale segments te fetchen en te verwerken zodat ik mijn code zo flexibel mogelijk heb
     #ik heb hier de records op maximaal 10000 staan vanwegen snelheid
@@ -230,22 +265,61 @@ def getsegmenttypes():
     print("finished maken segment to category")
     return
 
-conn = psycopg2.connect("dbname=voordeelopdracht user=postgres password=kip")
+def clearerd():
+    cur.execute("DROP TABLE category CASCADE;")
+    cur.execute("DROP TABLE gender CASCADE;")
+    cur.execute("CREATE TABLE category (idcatergory serial NOT NULL,category varchar(45),sub_category varchar(45),sub_sub_category varchar(45),CONSTRAINT category_pk PRIMARY KEY (idcatergory)) WITH (OIDS=FALSE);")
+    cur.execute("CREATE TABLE gender (idgender serial NOT NULL,gendernaam varchar(45),CONSTRAINT gender_pk PRIMARY KEY (idgender)) WITH (OIDS=FALSE);")
+    cur.execute("INSERT INTO category(category,sub_category,sub_sub_category) SELECT DISTINCT category, sub_category,sub_sub_category from all_p order by category asc;")
+    return
+
+conn = psycopg2.connect("dbname=voordeelshopgp user=postgres password=kip")
 cur = conn.cursor()
 
 #~~~~~~~~~~~~~~~~~~~~~~~~ code voor product koppeling
-createrecomendeditemstable()
+#createrecomendeditemstable()
 
 searchitems = createrecomendeditemsrecords()
 
-fillrecomendeditems(searchitems[0],searchitems[1],searchitems[2])
+clearerd()
 
-createidlink()
+#print("cat", searchitems[0],"\n")
+#print("subcat",searchitems[1],"\n")
+#print("gender",searchitems[2],"\n")
+#print("subsubcat", searchitems[3],"\n")
+#print("brand",searchitems[4],"\n")
 
-fillidlinktable()
+for item in searchitems[2]:
+    #print(item)
+    cur.execute("INSERT INTO gender(gendernaam) VALUES ('{}')".format(item))
+
+for item in searchitems[4]:
+    #print(item)
+    if item == "M&M's":
+        item = "M&M\''s"
+    if item == "Grab 'n Go":
+        item = "Grab \''n Go"
+    if item == "Lucy's Home":
+        item = "Lucy\''s Home"
+    if item == "L'alerteur":
+        item = "L\''alerteur"
+    if item == "Dr. Tom's":
+        item = "Dr. Tom\''s"
+    if item == "Lay's":
+        item = "Lay\''s"
+    if item == "Tesori d'Oriente":
+        item = "Tesori d\''Oriente"
+    if item == "Pet's Unlimited":
+        item = "Pet\''s Unlimited"
+    cur.execute("INSERT INTO brand(brandnaam) VALUES ('{}')".format(item))
+#fillrecomendeditems(searchitems[0],searchitems[1],searchitems[2])
+
+#createidlink()
+
+#fillidlinktable()
 
 #~~~~~~~~~~~~~~~~~~~~~~~~ code voor profil koppeling
-getsegmenttypes()
+#getsegmenttypes()
 
 # Make the changes to the database persistent
 conn.commit()

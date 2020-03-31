@@ -18,7 +18,7 @@ cur.execute("CREATE TABLE all_p (_ID varchar PRIMARY KEY, "
             "sub_sub_category varchar, "
             "gender varchar, "
             "color varchar, "
-            "herhaalaankoop varchar,"
+            "discount varchar,"
             "brand varchar);")
 
 cur.execute("CREATE TABLE all_se (_ID varchar PRIMARY KEY, "
@@ -33,7 +33,7 @@ col = db.products
 products = col.find()
 count =0
 for i in products:
-    cur.execute("INSERT INTO all_p (_ID, data, price,category ,sub_category, sub_sub_category, gender, color, herhaalaankoop, brand) VALUES (%s, %s, %s,%s, %s, %s,%s, %s,%s,%s)",
+    cur.execute("INSERT INTO all_p (_ID, data, price,category ,sub_category, sub_sub_category, gender, color, discount, brand) VALUES (%s, %s, %s,%s, %s, %s,%s, %s,%s,%s)",
                 (i['_id'],
                  i['name'] if 'name' in i else None,
                  i['price']['selling_price'] if 'price' in i else None,
@@ -42,7 +42,7 @@ for i in products:
                  i['sub_sub_category'] if 'sub_sub_category' in i else None,
                  i['gender'] if 'gender' in i else None,
                  i['color'] if 'color' in i else None,
-                 i['herhaalaankoop'] if 'herhaalaankoop' in i else None,
+                 i['discount'] if 'discount' in i else None,
                  i['brand'] if 'brand' in i else None))
     count +=1
     if count % 1000 == 0:
