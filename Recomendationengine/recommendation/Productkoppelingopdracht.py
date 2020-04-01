@@ -175,7 +175,8 @@ def getitemrecords(id):
     #filter voor een specifieke record
     if id == "38647-It'sglowtime":
         id = "38647-It\''sglowtime"
-    cur.execute("select all_p._id, all_p.category, all_p.sub_category, all_p.gender from all_p where _id = '{}'".format(id))
+    #edited last 2
+    cur.execute("select all_p._id, all_p.category, all_p.sub_category, all_p.gender,all_p.brand, all_p.sub_sub_category, all_p.price, all_p.discount from all_p where _id = '{}'".format(id))
     info = cur.fetchall()
     return info
 
@@ -268,10 +269,162 @@ def getsegmenttypes():
 def clearerd():
     cur.execute("DROP TABLE category CASCADE;")
     cur.execute("DROP TABLE gender CASCADE;")
+    cur.execute("DROP TABLE brand CASCADE;")
+    cur.execute("DROP TABLE product CASCADE")
+    cur.execute("DROP TABLE profile CASCADE")
+    cur.execute("DROP TABLE session CASCADE")
+
+    cur.execute("CREATE TABLE brand (idBrand serial NOT NULL,brandnaam varchar(45),CONSTRAINT brand_pk PRIMARY KEY (idBrand)) WITH (OIDS=FALSE);")
     cur.execute("CREATE TABLE category (idcatergory serial NOT NULL,category varchar(45),sub_category varchar(45),sub_sub_category varchar(45),CONSTRAINT category_pk PRIMARY KEY (idcatergory)) WITH (OIDS=FALSE);")
     cur.execute("CREATE TABLE gender (idgender serial NOT NULL,gendernaam varchar(45),CONSTRAINT gender_pk PRIMARY KEY (idgender)) WITH (OIDS=FALSE);")
-    cur.execute("INSERT INTO category(category,sub_category,sub_sub_category) SELECT DISTINCT category, sub_category,sub_sub_category from all_p order by category asc;")
+    cur.execute("CREATE TABLE product (id varchar(45) NOT NULL,selling_price integer,brand_idBrand integer,gender_idgender integer,discount varchar(45),catergory_idcatergory integer,CONSTRAINT product_pk PRIMARY KEY (id)) WITH (OIDS=FALSE);")
+    cur.execute("CREATE TABLE profile (id varchar(255) NOT NULL,recommendation_segment varchar(45),recommendations varchar,buids varchar,CONSTRAINT profile_pk PRIMARY KEY (id)) WITH (OIDS=FALSE);")
+    cur.execute("CREATE TABLE session (id varchar(255) NOT NULL,has_sale varchar(45),prefences varchar,profile_id varchar(255),buid varchar,segment varchar(255),CONSTRAINT session_pk PRIMARY KEY (id)) WITH (OIDS=FALSE);")
+
     return
+
+def filldata():
+    cur.execute("INSERT INTO category(category,sub_category,sub_sub_category) SELECT DISTINCT category, sub_category,sub_sub_category from all_p order by category asc;")
+    cur.execute("INSERT INTO profile(id, recommendations,buids) SELECT _id,recommendations, buids from all_pro;")
+
+    for item in searchitems[2]:
+        # print(item)
+        cur.execute("INSERT INTO gender(gendernaam) VALUES ('{}')".format(item))
+
+    for item in searchitems[4]:
+        # print(item)
+        if item == "M&M's":
+            item = "M&M\''s"
+        if item == "Grab 'n Go":
+            item = "Grab \''n Go"
+        if item == "Lucy's Home":
+            item = "Lucy\''s Home"
+        if item == "L'alerteur":
+            item = "L\''alerteur"
+        if item == "Dr. Tom's":
+            item = "Dr. Tom\''s"
+        if item == "Lay's":
+            item = "Lay\''s"
+        if item == "Tesori d'Oriente":
+            item = "Tesori d\''Oriente"
+        if item == "Pet's Unlimited":
+            item = "Pet\''s Unlimited"
+        cur.execute("INSERT INTO brand(brandnaam) VALUES ('{}')".format(item))
+    return
+
+def queuedata():
+    cur.execute("select all_p._id from all_p")
+    ids = cur.fetchall()
+    count =0
+    for id in ids:
+        itemrecords = getitemrecords(id[0])
+        #cur.execute("select idgender from gender where gendernaam = 'Gezin';")
+        #print(itemrecords[0][3])
+
+        cur.execute("select idgender from gender where gendernaam = '{}';".format(itemrecords[0][3]))
+        genderid = cur.fetchall()[0][0]
+        #mogelijk moeten er nog exception bij
+        item = itemrecords[0][4]
+        if item == "M&M's":
+            item = "M&M\''s"
+        if item == "Grab 'n Go":
+            item = "Grab \''n Go"
+        if item == "Lucy's Home":
+            item = "Lucy\''s Home"
+        if item == "L'alerteur":
+            item = "L\''alerteur"
+        if item == "Dr. Tom's":
+            item = "Dr. Tom\''s"
+        if item == "Lay's":
+            item = "Lay\''s"
+        if item == "Tesori d'Oriente":
+            item = "Tesori d\''Oriente"
+        if item == "Pet's Unlimited":
+            item = "Pet\''s Unlimited"
+
+        cur.execute("select idbrand from brand where brandnaam = '{}';".format(item))
+        try:
+            brandid = cur.fetchall()[0][0]
+        except:
+            #dit is het merk None, eigenmerk.. wordt maar op 2 records toegepast
+            brandid = 2
+            #print("error", item, cur.fetchall())
+
+        category = itemrecords[0][1]
+        subcategory = itemrecords[0][2]
+        subsubcategory = itemrecords[0][5]
+        if subcategory == "Baby's en kinderen":
+            subcategory = "Baby\''s en kinderen"
+        if category == "['Make-up & geuren', 'Make-up', 'Nagellak']":
+            category = "[\''Make-up & geuren\'', \''Make-up\'', \''Nagellak\'']"
+        if subsubcategory =="Vibrators en dildo's":
+            subsubcategory = "Vibrators en dildo\''s"
+
+        cur.execute("select * from category where category = '{}' and sub_category = '{}' and sub_sub_category = '{}';".format(category,subcategory,subsubcategory))
+        try:
+            catid = cur.fetchall()[0][0]
+        except:
+            catid = 238
+            #print("error",category,subcategory,subsubcategory,cur.fetchall())
+
+        itemid = itemrecords[0][0]
+        if itemid == "38647-It'sglowtime":
+            itemid = "38647-It\''sglowtime"
+
+        selling_price = itemrecords[0][6]
+        if selling_price == "None":
+            selling_price = 0
+        if selling_price == "none":
+            selling_price = 0
+        if selling_price == "":
+            selling_price = 0
+        if selling_price == "null":
+            selling_price = 0
+        if selling_price == "Null":
+            selling_price = 0
+        if selling_price == subsubcategory:
+            selling_price= 0
+
+        productrecord = [itemid,selling_price,genderid,brandid,itemrecords[0][7],catid]
+        #print(productrecord)
+        try:
+            cur.execute("INSERT INTO product(id,selling_price,brand_idbrand,gender_idgender,discount,catergory_idcatergory) VALUES ('{}','{}','{}','{}','{}','{}')".format(productrecord[0],productrecord[1],productrecord[3],productrecord[2],productrecord[4],productrecord[5]))
+        except:
+            print((productrecord[1]))
+            productrecord(type(productrecord[1]))
+        count += 1
+        if count % 1000 == 0:
+            print(count, "products")
+    print("done with products")
+
+def fkmaker():
+    cur.execute("ALTER TABLE product ADD CONSTRAINT product_fk0 FOREIGN KEY (brand_idBrand) REFERENCES brand(idBrand);")
+    cur.execute("ALTER TABLE product ADD CONSTRAINT product_fk1 FOREIGN KEY (gender_idgender) REFERENCES gender(idgender);")
+    cur.execute("ALTER TABLE product ADD CONSTRAINT product_fk2 FOREIGN KEY (catergory_idcatergory) REFERENCES category(idcatergory);")
+    cur.execute("ALTER TABLE session ADD CONSTRAINT session_fk0 FOREIGN KEY (profile_id) REFERENCES profile(id);")
+
+def sessiontoprofile():
+    cur.execute("select buid,id from session")
+    buids = cur.fetchall()
+    count = 0
+    for buid in buids[:250]:
+        #print(buid[0][2:-2])
+        cur.execute("SELECT id FROM profile WHERE buids LIKE '%{}%'".format(buid[0][2:-2]))
+        try:
+            profid = cur.fetchall()[0][0]
+            sesid = buid[1]
+            #print("profid",profid)
+            #print("id",sesid)
+            cur.execute("UPDATE session SET profile_id = '{}' WHERE id = '{}';".format(profid,sesid))
+        except:
+            print("Error","profid",profid,"id",sesid)
+            #print("id",sesid)
+        count += 1
+        if count % 50 == 0:
+            print(count, "profiles linked")
+    print("done with profile-link")
+
+
 
 conn = psycopg2.connect("dbname=voordeelshopgp user=postgres password=kip")
 cur = conn.cursor()
@@ -282,36 +435,22 @@ cur = conn.cursor()
 searchitems = createrecomendeditemsrecords()
 
 clearerd()
+filldata()
+queuedata()
+fkmaker()
 
+sessiontoprofile()
+
+
+
+#debug voor searchitems
 #print("cat", searchitems[0],"\n")
 #print("subcat",searchitems[1],"\n")
 #print("gender",searchitems[2],"\n")
 #print("subsubcat", searchitems[3],"\n")
 #print("brand",searchitems[4],"\n")
 
-for item in searchitems[2]:
-    #print(item)
-    cur.execute("INSERT INTO gender(gendernaam) VALUES ('{}')".format(item))
 
-for item in searchitems[4]:
-    #print(item)
-    if item == "M&M's":
-        item = "M&M\''s"
-    if item == "Grab 'n Go":
-        item = "Grab \''n Go"
-    if item == "Lucy's Home":
-        item = "Lucy\''s Home"
-    if item == "L'alerteur":
-        item = "L\''alerteur"
-    if item == "Dr. Tom's":
-        item = "Dr. Tom\''s"
-    if item == "Lay's":
-        item = "Lay\''s"
-    if item == "Tesori d'Oriente":
-        item = "Tesori d\''Oriente"
-    if item == "Pet's Unlimited":
-        item = "Pet\''s Unlimited"
-    cur.execute("INSERT INTO brand(brandnaam) VALUES ('{}')".format(item))
 #fillrecomendeditems(searchitems[0],searchitems[1],searchitems[2])
 
 #createidlink()
