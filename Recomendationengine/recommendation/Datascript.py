@@ -2,35 +2,85 @@
 #https://api.mongodb.com/python/current/tutorial.html
 #https://www.psycopg.org/docs/usage.html
 import psycopg2
+from pymongo import MongoClient
 
-#not used
-def recomendeditems(category,subcategory,targetaudience):
-    #Hier maak ik gebruik van een SQL statement die in mijn Recomended items table alleen maar de producten hallen die overeen komen de gegeven category, subcategory en target audience(kunnen maximaal 5 items zijn*)
-    #Ik moest verschillenden entries aanpassen omdat ze niet 1 op 1 in sql konden, hier onder worden de strings aangepast zodat ze werken in SQL
-    if targetaudience == "Baby's":
-        targetaudience = "Baby\''s"
-    if subcategory == "Baby's en kinderen":
-        subcategory = "Baby\''s en kinderen"
-    if category == "['Make-up & geuren', 'Make-up', 'Nagellak']":
-        category ="[\''Make-up & geuren\'', \''Make-up\'', \''Nagellak\'']"
+def dataimportmgdb():
+    cur.execute("DROP TABLE IF EXISTS all_p;")
+    cur.execute("DROP TABLE IF EXISTS all_se;")
+    cur.execute("DROP TABLE IF EXISTS all_pro;")
 
-    cur.execute("select recomendedpro._id, recomendedpro.category, recomendedpro.sub_category, recomendedpro.targetaudience from recomendedpro  where category = '{}'and sub_category = '{}' and targetaudience = '{}'".format(category, subcategory, targetaudience))
-    info = cur.fetchall()
-
-    return info
-
-#not used
-def createrecomendeditemstable():
-    #Deze functie maak een table aan voor mijn producten die ik wil laten zien
-    cur.execute("DROP TABLE IF EXISTS recomendedpro;")
-
-    cur.execute("CREATE TABLE recomendedpro (id serial  PRIMARY KEY, "
-                "_ID varchar , "
-                "category varchar, "
+    cur.execute("CREATE TABLE all_p (_ID varchar PRIMARY KEY, "
+                "data varchar, "
+                "price integer, "
+                "category varchar,"
                 "sub_category varchar, "
-                "targetaudience varchar, "
-                "sellingprice varchar, "
-                "deal varchar);")
+                "sub_sub_category varchar, "
+                "gender varchar, "
+                "color varchar, "
+                "discount varchar,"
+                "brand varchar);")
+
+    cur.execute("CREATE TABLE all_se (_ID varchar PRIMARY KEY, "
+                "buid varchar, has_sale varchar, segment varchar, preferences varchar, itorder varchar);")
+
+    cur.execute("CREATE TABLE all_pro (_ID varchar PRIMARY KEY, "
+                "buids varchar,"
+                "recommendations varchar);")
+    col = db.products
+    products = col.find()
+    count = 0
+    for i in products:
+        try:
+            cur.execute(
+                "INSERT INTO all_p (_ID, data, price,category ,sub_category, sub_sub_category, gender, color, discount, brand) VALUES (%s, %s, %s,%s, %s, %s,%s, %s,%s,%s)",
+                (i['_id'],
+                 i['name'] if 'name' in i else None,
+                 i['price']['selling_price'] if 'price' in i else None,
+                 i['category'] if 'category' in i else None,
+                 i['sub_category'] if 'sub_category' in i else None,
+                 i['sub_sub_category'] if 'sub_sub_category' in i else None,
+                 i['gender'] if 'gender' in i else None,
+                 i['color'] if 'color' in i else None,
+                 str(i['properties']['discount']) if 'properties' in i else None,
+                 i['brand'] if 'brand' in i else None))
+            count += 1
+            if count % 1000 == 0:
+                print(count, "Products")
+        except:
+            continue
+    print("done with products")
+
+    col = db.profiles
+    profiles = col.find()
+    count = 0
+    for i in profiles:
+        cur.execute("INSERT INTO all_pro (_ID, buids, recommendations) VALUES (%s, %s, %s)",
+                    (str(i['_id']),
+                     i['buids'] if 'buids' in i else None,
+                     i['recommendations']['viewed_before'] if 'recommendations' in i else None))
+        count += 1
+        if count % 1000 == 0:
+            print(count, "Profiles")
+    print("done with profiles")
+
+    col = db.sessions
+    sessions = col.find()
+
+    count = 0
+    for i in sessions:
+        cur.execute("INSERT INTO all_se (_ID, buid, has_sale, preferences,itorder,segment) VALUES (%s, %s,%s,%s,%s,%s)",
+                    (str(i['_id']),
+                     str(i['buid']) if 'buid' in i else None,
+                     str(i['has_sale']) if 'has_sale' in i else None,
+                     str(i['preferences']) if 'preferences' in i else None,
+                     str(i['order']) if 'order' in i else None,
+                     str(i['segment']) if 'segment' in i else None))
+        count += 1
+        if count % 1000 == 0:
+            print(count, "Sessions")
+    print("done with sessions")
+    conn.commit()
+
 
 def createrecomendeditemsrecords():
     categorydict = {}
@@ -118,58 +168,6 @@ def createrecomendeditemsrecords():
     #return alle list zodat ik ze ergens anders kan gebruiken in anderen stukken code voor flexibiliteit
     return categorylst,subcategorylst,genderlst,subsubcategorylst,brandlst
 
-#not used
-def fillrecomendeditems(categorylst,subcategorylst,genderlst):
-    cur.execute("select all_p._id, all_p.category, all_p.sub_category, all_p.gender, all_p.price, all_p.discount from all_p WHERE all_p.discount IS NOT NULL and all_p.category is not null order by category, sub_category, gender,discount asc")
-    rows = cur.fetchall()
-    #in dit stukje code maak ik per subcategory een selectie van 5 items per target/gender en schrijf dit weg naar de database
-    for j in range(0, len(subcategorylst)):
-        for k in range(0, len(genderlst)):
-            #de counter voor het maximale aantal elementen per subcategory en target/gender
-            count = 0
-            for row in rows:
-                # De i heeft de category waarmee we gaan sorteren
-                if count == 5:
-                    break
-                if (subcategorylst[j] in row and genderlst[k] in row):
-                    count += 1
-                    cur.execute(
-                        "INSERT INTO recomendedpro (_ID, category, sub_category, targetaudience, sellingprice, deal) VALUES ( %s, %s, %s, %s, %s, %s)",
-                        (row[0], row[1], row[2], row[3], row[4], row[5]))
-
-    for i in range(0, len(categorylst)):
-    # in dit stukje code maak ik per category een selectie van 5 items per target/gender en schrijf dit weg naar de database
-        for k in range(0, len(genderlst)):
-            # de counter voor het maximale aantal elementen per category en target/gender
-            count = 0
-            for row in rows:
-                # De i heeft de category waarmee we gaan sorteren
-                if count == 5:
-                    break
-                if (subcategorylst[i] in row and genderlst[k] in row):
-                    # print(row)
-                    count += 1
-                    cur.execute(
-                        "INSERT INTO recomendedpro (_ID, category, sub_category, targetaudience, sellingprice, deal) VALUES ( %s, %s, %s, %s, %s, %s)",
-                        (row[0], row[1], row[2], row[3], row[4], row[5]))
-
-    cur.execute("select distinct recomendedpro._id, recomendedpro.category, recomendedpro.sub_category, recomendedpro.targetaudience from recomendedpro order by recomendedpro._id asc")
-    prorows = cur.fetchall()
-    #omdat ik problemen had met duplicate records door mijn code hierboven, besloot ik een filter select te gebruiken en de table opnieuw aantemaken zodat ik correcte waardens had
-    cur.execute("DROP TABLE IF EXISTS recomendedpro;")
-
-    cur.execute("CREATE TABLE recomendedpro (_ID varchar  PRIMARY KEY, "
-                "category varchar, "
-                "sub_category varchar, "
-                "targetaudience varchar);")
-    #Het opnieuw wegschrijven van de regels
-    for prorow in prorows:
-        cur.execute("INSERT INTO recomendedpro (_ID, category, sub_category, targetaudience) VALUES ( %s, %s, %s, %s)",
-                    (prorow[0], prorow[1], prorow[2], prorow[3]))
-
-    return
-
-#not used
 def getitemrecords(id):
     #het ophalen van de prodcuct gegevens met een query
     #filter voor een specifieke record
@@ -180,92 +178,6 @@ def getitemrecords(id):
     info = cur.fetchall()
     return info
 
-#not used
-def createidlink():
-    #een functie om een tabel aan temaken
-    cur.execute("DROP TABLE IF EXISTS prolink;")
-
-    cur.execute("CREATE TABLE prolink (PID varchar  PRIMARY KEY, "
-                "pro1 varchar, "
-                "pro2 varchar, "
-                "pro3 varchar, "
-                "pro4 varchar, "
-                "pro5 varchar);")
-    return
-#not used
-def fillidlinktable():
-    #Deze functie itereerd over alle items die er zijn en verwerkt alleproducten in een nieuwe tabel met de recommended items erbij
-    cur.execute("select all_p._id from all_p")
-    ids = cur.fetchall()
-
-    for id in ids:
-        itemrecords = getitemrecords(id[0])
-        recomendedlist = recomendeditems(itemrecords[0][1], itemrecords[0][2], itemrecords[0][3])
-        #print("list met recomende id's", [i[0] for i in recomendedlist])
-        if len(recomendedlist) == 5:
-            cur.execute("INSERT INTO prolink (PID, pro1, pro2, pro3,pro4,pro5) VALUES ( %s, %s, %s, %s,%s,%s)",(id, recomendedlist[0][0], recomendedlist[1][0], recomendedlist[2][0],recomendedlist[3][0],recomendedlist[4][0]))
-        if len(recomendedlist) == 4:
-            cur.execute("INSERT INTO prolink (PID, pro1, pro2, pro3,pro4) VALUES ( %s, %s, %s, %s,%s)",(id, recomendedlist[0][0], recomendedlist[1][0], recomendedlist[2][0],recomendedlist[3][0]))
-        if len(recomendedlist) == 3:
-            cur.execute("INSERT INTO prolink (PID, pro1, pro2, pro3) VALUES ( %s, %s, %s, %s)",(id, recomendedlist[0][0], recomendedlist[1][0], recomendedlist[2][0]))
-        if len(recomendedlist) == 2:
-            cur.execute("INSERT INTO prolink (PID, pro1, pro2) VALUES ( %s, %s, %s)",(id, recomendedlist[0][0], recomendedlist[1][0]))
-        if len(recomendedlist) == 1:
-            cur.execute("INSERT INTO prolink (PID, pro1) VALUES ( %s, %s)",(id, recomendedlist[0][0]))
-        if len(recomendedlist) == 0:
-            cur.execute("INSERT INTO prolink (PID) VALUES ( %s)",(id))
-    print("finnisched filling product table")
-    return
-
-#not used
-def getsegmenttypes():
-    #Hier heb ik een stukje code om ale segments te fetchen en te verwerken zodat ik mijn code zo flexibel mogelijk heb
-    #ik heb hier de records op maximaal 10000 staan vanwegen snelheid
-    segmentdict= {}
-    cur.execute("select sessions.profid, sessions.segment,sessions.sale,profiles_previously_viewed.prodid, products.category, products.subcategory, products.targetaudience from sessions right JOIN profiles_previously_viewed ON sessions.profid=profiles_previously_viewed.profid right JOIN products ON products.id=profiles_previously_viewed.prodid limit 10000")
-    getsegments= cur.fetchall()
-    #print(getsegments)
-    for segment in getsegments:
-        #print(segment[1])
-        if segment[1] in segmentdict:
-            segmentdict[segment[1]] += 1
-        else:
-            segmentdict[segment[1]] = 1
-
-    #Het aanmaken van een tabel voor het uiteindelijk resultaat
-    cur.execute("DROP TABLE IF EXISTS segmenttocat; CREATE TABLE segmenttocat (segment VARCHAR, category VARCHAR, PRIMARY KEY (segment)); ")
-    #Hier maak ik gebruik van een sql statement om een nieuwe table aan temaken om me verder tewerken voor de gemakelijkheid
-    cur.execute("DROP TABLE IF EXISTS combindedsession; CREATE TABLE combindedsession AS select sessions.profid, sessions.segment,sessions.sale,profiles_previously_viewed.prodid, products.category, products.subcategory, products.targetaudience from sessions  right JOIN profiles_previously_viewed ON sessions.profid=profiles_previously_viewed.profid right JOIN products ON products.id=profiles_previously_viewed.prodid order by prodid asc limit 10000;")
-
-    i=0
-    for keys in segmentdict.keys():
-
-        maxrecord = {}
-        cur.execute("Select distinct prodid from combindedsession where segment = '{}'".format(list(segmentdict.keys())[i]))
-        products = cur.fetchall()
-        for producten in products:
-
-            #Ik maak gebruik van de eigenschappen van een dictionaire om de records te tellen zodat ik weet wat een segments het meeste koopt en daarop kan baseren wat hij/zij aangeraden moet krijgen
-            record = getitemrecords(producten[0])[0][1]
-            if record in maxrecord:
-                maxrecord[record] += 1
-            else:
-                maxrecord[record] = 1
-
-        v = list(maxrecord.values())
-        k = list(maxrecord.keys())
-        #door onregelmatige data kan het voorkomen dat het niet altijd goed gaat, daarm een try except
-        try:
-            mostcat = k[v.index(max(v))]
-        except:
-            i += 1
-            continue
-        cur.execute("INSERT INTO segmenttocat (segment,category) VALUES ( %s,%s)", (keys,mostcat))
-        i+=1
-
-    print("finished maken segment to category")
-    return
-
 def clearerd():
     cur.execute("DROP TABLE IF EXISTS category CASCADE;")
     cur.execute("DROP TABLE IF EXISTS gender CASCADE;")
@@ -273,6 +185,8 @@ def clearerd():
     cur.execute("DROP TABLE IF EXISTS product CASCADE")
     cur.execute("DROP TABLE IF EXISTS profile CASCADE")
     cur.execute("DROP TABLE IF EXISTS session CASCADE")
+    cur.execute("DROP TABLE IF EXISTS preference_session CASCADE")
+    cur.execute("DROP TABLE IF EXISTS order_session CASCADE")
 
     cur.execute("CREATE TABLE brand (idBrand serial NOT NULL,brandnaam varchar(45),CONSTRAINT brand_pk PRIMARY KEY (idBrand)) WITH (OIDS=FALSE);")
     cur.execute("CREATE TABLE category (idcatergory serial NOT NULL,category varchar(45),sub_category varchar(45),sub_sub_category varchar(45),CONSTRAINT category_pk PRIMARY KEY (idcatergory)) WITH (OIDS=FALSE);")
@@ -280,13 +194,15 @@ def clearerd():
     cur.execute("CREATE TABLE product (id varchar(45) NOT NULL,selling_price integer,brand_idBrand integer,gender_idgender integer,discount varchar(45),catergory_idcatergory integer,CONSTRAINT product_pk PRIMARY KEY (id)) WITH (OIDS=FALSE);")
     cur.execute("CREATE TABLE profile (id varchar(255) NOT NULL,recommendation_segment varchar(45),recommendations varchar,buids varchar,CONSTRAINT profile_pk PRIMARY KEY (id)) WITH (OIDS=FALSE);")
     cur.execute("CREATE TABLE session (id varchar(255) NOT NULL,has_sale varchar(45),prefences varchar,profile_id varchar(255),buid varchar,segment varchar(255),CONSTRAINT session_pk PRIMARY KEY (id)) WITH (OIDS=FALSE);")
-
+    cur.execute("CREATE TABLE preference_session (id serial NOT NULL,session_id varchar(255) NOT NULL, category_idcategory integer NOT NULL, CONSTRAINT preference_session_pk PRIMARY KEY (id)) WITH (OIDS=FALSE);")
+    cur.execute("CREATE TABLE order_session (id serial NOT NULL,session_id varchar(255) NOT NULL,product_id varchar(45) NOT NULL,CONSTRAINT order_session_pk PRIMARY KEY (id)) WITH (OIDS=FALSE);")
     return
 
 def filldata():
     cur.execute("INSERT INTO category(category,sub_category,sub_sub_category) SELECT DISTINCT category, sub_category,sub_sub_category from all_p order by category asc;")
     cur.execute("INSERT INTO profile(id, recommendations,buids) SELECT _id,recommendations, buids from all_pro;")
     cur.execute("INSERT INTO session(id, has_sale, prefences,buid,segment) SELECT all_se._id,all_se.has_sale,all_se.preferences,all_se.buid,all_se.segment from all_se;")
+
     for item in searchitems[2]:
         # print(item)
         cur.execute("INSERT INTO gender(gendernaam) VALUES ('{}')".format(item))
@@ -318,12 +234,10 @@ def queuedata():
     count =0
     for id in ids:
         itemrecords = getitemrecords(id[0])
-        #cur.execute("select idgender from gender where gendernaam = 'Gezin';")
-        #print(itemrecords[0][3])
 
         cur.execute("select idgender from gender where gendernaam = '{}';".format(itemrecords[0][3]))
         genderid = cur.fetchall()[0][0]
-        #mogelijk moeten er nog exception bij
+
         item = itemrecords[0][4]
         if item == "M&M's":
             item = "M&M\''s"
@@ -348,7 +262,7 @@ def queuedata():
         except:
             #dit is het merk None, eigenmerk.. wordt maar op 2 records toegepast
             brandid = 2
-            #print("error", item, cur.fetchall())
+
 
         category = itemrecords[0][1]
         subcategory = itemrecords[0][2]
@@ -365,7 +279,7 @@ def queuedata():
             catid = cur.fetchall()[0][0]
         except:
             catid = 238
-            #print("error",category,subcategory,subsubcategory,cur.fetchall())
+
 
         itemid = itemrecords[0][0]
         if itemid == "38647-It'sglowtime":
@@ -386,7 +300,7 @@ def queuedata():
             selling_price= 0
 
         productrecord = [itemid,selling_price,genderid,brandid,itemrecords[0][7],catid]
-        #print(productrecord)
+
         try:
             cur.execute("INSERT INTO product(id,selling_price,brand_idbrand,gender_idgender,discount,catergory_idcatergory) VALUES ('{}','{}','{}','{}','{}','{}')".format(productrecord[0],productrecord[1],productrecord[3],productrecord[2],productrecord[4],productrecord[5]))
         except:
@@ -401,15 +315,15 @@ def fkmaker():
     cur.execute("ALTER TABLE product ADD CONSTRAINT product_fk0 FOREIGN KEY (brand_idBrand) REFERENCES brand(idBrand);")
     cur.execute("ALTER TABLE product ADD CONSTRAINT product_fk1 FOREIGN KEY (gender_idgender) REFERENCES gender(idgender);")
     cur.execute("ALTER TABLE product ADD CONSTRAINT product_fk2 FOREIGN KEY (catergory_idcatergory) REFERENCES category(idcatergory);")
+    cur.execute("ALTER TABLE session ADD CONSTRAINT session_fk0 FOREIGN KEY (profile_id) REFERENCES profile(id);")
 
 def sessiontoprofile():
     cur.execute("select buid,id from session")
     buids = cur.fetchall()
     count = 0
     for buid in buids[:250]:
-        print(buid[0][2:-2])
+        #print(buid[0][2:-2])
         cur.execute("SELECT id FROM profile WHERE buids LIKE '%{}%'".format(buid[0][2:-2]))
-        print(cur.fetchall())
         try:
             profid = cur.fetchall()[0][0]
             sesid = buid[1]
@@ -425,44 +339,24 @@ def sessiontoprofile():
     print("done with profile-link")
 
 
+client = MongoClient('localhost', 27017)    #MongodB connectie
+db = client.huwebshop
 
 conn = psycopg2.connect("dbname=voordeelshoponescript user=postgres password=kip")
 cur = conn.cursor()
 
 #~~~~~~~~~~~~~~~~~~~~~~~~ code voor product koppeling
-#createrecomendeditemstable()
+
+dataimportmgdb()
 
 searchitems = createrecomendeditemsrecords()
-
-#print(searchitems)
 
 clearerd()
 filldata()
 queuedata()
 fkmaker()
 
-
-#cur.execute("DROP TABLE session CASCADE")
-#cur.execute("CREATE TABLE session (id varchar(255) NOT NULL,has_sale varchar(45),prefences varchar,profile_id varchar(255),buid varchar,segment varchar(255),CONSTRAINT session_pk PRIMARY KEY (id)) WITH (OIDS=FALSE);")
-
-#cur.execute("INSERT INTO session(id, has_sale, prefences,buid,segment) SELECT all_se._id,all_se.has_sale,all_se.preferences,all_se.buid,all_se.segment from all_se;")
 sessiontoprofile()
-
-
-
-#debug voor searchitems
-#print("cat", searchitems[0],"\n")
-#print("subcat",searchitems[1],"\n")
-#print("gender",searchitems[2],"\n")
-#print("subsubcat", searchitems[3],"\n")
-#print("brand",searchitems[4],"\n")
-
-
-#fillrecomendeditems(searchitems[0],searchitems[1],searchitems[2])
-
-#createidlink()
-
-#fillidlinktable()
 
 #~~~~~~~~~~~~~~~~~~~~~~~~ code voor profil koppeling
 #getsegmenttypes()

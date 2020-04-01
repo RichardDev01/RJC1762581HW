@@ -32,21 +32,25 @@ cur.execute("CREATE TABLE all_pro (_ID varchar PRIMARY KEY, "
 col = db.products
 products = col.find()
 count =0
+count =0
 for i in products:
-    cur.execute("INSERT INTO all_p (_ID, data, price,category ,sub_category, sub_sub_category, gender, color, discount, brand) VALUES (%s, %s, %s,%s, %s, %s,%s, %s,%s,%s)",
-                (i['_id'],
-                 i['name'] if 'name' in i else None,
-                 i['price']['selling_price'] if 'price' in i else None,
-                 i['category'] if 'category' in i else None,
-                 i['sub_category'] if 'sub_category' in i else None,
-                 i['sub_sub_category'] if 'sub_sub_category' in i else None,
-                 i['gender'] if 'gender' in i else None,
-                 i['color'] if 'color' in i else None,
-                 i['discount'] if 'discount' in i else None,
-                 i['brand'] if 'brand' in i else None))
-    count +=1
-    if count % 1000 == 0:
-        print(count,"Products")
+    try:
+        cur.execute("INSERT INTO all_p (_ID, data, price,category ,sub_category, sub_sub_category, gender, color, discount, brand) VALUES (%s, %s, %s,%s, %s, %s,%s, %s,%s,%s)",
+                    (i['_id'],
+                     i['name'] if 'name' in i else None,
+                     i['price']['selling_price'] if 'price' in i else None,
+                     i['category'] if 'category' in i else None,
+                     i['sub_category'] if 'sub_category' in i else None,
+                     i['sub_sub_category'] if 'sub_sub_category' in i else None,
+                     i['gender'] if 'gender' in i else None,
+                     i['color'] if 'color' in i else None,
+                     str(i['properties']['discount']) if 'properties' in i else None,
+                     i['brand'] if 'brand' in i else None))
+        count +=1
+        if count % 1000 == 0:
+            print(count,"Products")
+    except:
+        continue
 print("done with products")
 
 col = db.profiles

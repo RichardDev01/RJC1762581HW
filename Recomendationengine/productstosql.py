@@ -44,7 +44,6 @@ for i in products:
                      i['gender'] if 'gender' in i else None,
                      i['color'] if 'color' in i else None,
                      str(i['properties']['discount']) if 'properties' in i else None,
-                     #i['recommendable'] if 'recommendable' in i else None,
                      i['brand'] if 'brand' in i else None))
         count +=1
         if count % 1000 == 0:
