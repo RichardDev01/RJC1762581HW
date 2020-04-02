@@ -430,39 +430,26 @@ conn = psycopg2.connect("dbname=voordeelshoponescript user=postgres password=kip
 cur = conn.cursor()
 
 #~~~~~~~~~~~~~~~~~~~~~~~~ code voor product koppeling
-#createrecomendeditemstable()
 
 searchitems = createrecomendeditemsrecords()
 
 #print(searchitems)
 
-clearerd()
-filldata()
-queuedata()
-fkmaker()
+#clearerd()
+#filldata()
+#queuedata()
+#fkmaker()
+
+#sessiontoprofile()
 
 
-#cur.execute("DROP TABLE session CASCADE")
-#cur.execute("CREATE TABLE session (id varchar(255) NOT NULL,has_sale varchar(45),prefences varchar,profile_id varchar(255),buid varchar,segment varchar(255),CONSTRAINT session_pk PRIMARY KEY (id)) WITH (OIDS=FALSE);")
+createrecomendeditemstable()
 
-#cur.execute("INSERT INTO session(id, has_sale, prefences,buid,segment) SELECT all_se._id,all_se.has_sale,all_se.preferences,all_se.buid,all_se.segment from all_se;")
-sessiontoprofile()
+fillrecomendeditems(searchitems[0],searchitems[1],searchitems[2])
 
+createidlink()
 
-
-#debug voor searchitems
-#print("cat", searchitems[0],"\n")
-#print("subcat",searchitems[1],"\n")
-#print("gender",searchitems[2],"\n")
-#print("subsubcat", searchitems[3],"\n")
-#print("brand",searchitems[4],"\n")
-
-
-#fillrecomendeditems(searchitems[0],searchitems[1],searchitems[2])
-
-#createidlink()
-
-#fillidlinktable()
+fillidlinktable()
 
 #~~~~~~~~~~~~~~~~~~~~~~~~ code voor profil koppeling
 #getsegmenttypes()
