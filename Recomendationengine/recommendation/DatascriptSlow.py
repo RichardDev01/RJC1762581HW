@@ -30,64 +30,103 @@ def dataimportmgdb():
     products = col.find()
     count = 0
     for i in products:
+
         try:
+            preferenceval = {}
+
+            try:
+                preference = i['preferences']['brand']
+                newlist = list()
+                for j in preference.keys():
+                    newlist.append(j)
+                    break
+
+                preferenceval = newlist[0]
+
+                preferenceval = str(preferenceval)
+                cur.execute("select idbrand from brand where brandnaam = '{}' ".format(preferenceval))
+                info = cur.fetchall()
+
+                brandnaam = info[0][0]
+                cur.execute(
+                    "SELECT id FROM product where brand_idbrand = {} ORDER BY RANDOM() LIMIT 1;".format(brandnaam))
+                proid = cur.fetchall()
+                # print(proid[0][0])
+                preferenceval = "{" + proid[0][0] + "}"
+
+                '''
+                preference = i['preferences']['brand']
+                {k: v for k, v in sorted(preference.items(), key=lambda item: item[1])}
+                print(preference.keys())
+                preferenceval = newlist
+                print(preferenceval)
+                '''
+            except:
+                preferenceval = "{}"
+
+            orderstring = "{"
+            try:
+                for j in range(len(i['order']['products'])):
+                    # print(i['order']['products'][j].get('id'),end= " ")
+                    orderstring += i['order']['products'][j].get('id') + ","
+                orderstring = orderstring[:-1]
+                orderstring += "}"
+            except:
+                orderstring = "{}"
+
             cur.execute(
-                "INSERT INTO all_p (_ID, data, price,category ,sub_category, sub_sub_category, gender, color, discount, brand) VALUES (%s, %s, %s,%s, %s, %s,%s, %s,%s,%s)",
-                (i['_id'],
-                 i['name'] if 'name' in i else None,
-                 i['price']['selling_price'] if 'price' in i else None,
-                 i['category'] if 'category' in i else None,
-                 i['sub_category'] if 'sub_category' in i else None,
-                 i['sub_sub_category'] if 'sub_sub_category' in i else None,
-                 i['gender'] if 'gender' in i else None,
-                 i['color'] if 'color' in i else None,
-                 str(i['properties']['discount']) if 'properties' in i else None,
-                 i['brand'] if 'brand' in i else None))
-            count += 1
-            if count % 1000 == 0:
-                print(count, "Products")
+                "INSERT INTO all_se (_ID, buid, has_sale, preferences,itorder,segment) VALUES (%s, %s,%s,%s,%s,%s)",
+                (str(i['_id']),
+                 str(i['buid']) if 'buid' in i else None,
+                 str(i['has_sale']) if 'has_sale' in i else None,
+                 preferenceval,
+                 # str(i['preferences']['brand']) if 'preferences' in i else None,
+                 # str(i['order']['products'][0]) if 'products' in i else None,
+                 orderstring,
+                 str(i['segment']) if 'segment' in i else None))
+
+            '''
+            cur.execute("INSERT INTO all_se (_ID, buid, has_sale, preferences,itorder,segment) VALUES ('{}', '{}','{}','{}','{}','{}')".format(str(i["_id"]), i["buid"] if "buid" in i else None, str(i["has_sale"]) if "has_sale" in i else None, preferenceval,orderstring, str(i["segment"]) if "segment" in i else None))
+            '''
+
         except:
-            continue
-    print("done with products")
 
-    col = db.profiles
-    profiles = col.find()
-    count = 0
-    for i in profiles:
-        cur.execute("INSERT INTO all_pro (_ID, buids, recommendations) VALUES (%s, %s, %s)",
-                    (str(i['_id']),
-                     i['buids'] if 'buids' in i else None,
-                     i['recommendations']['viewed_before'] if 'recommendations' in i else None))
-        count += 1
-        if count % 1000 == 0:
-            print(count, "Profiles")
-    print("done with profiles")
+            try:
+                orderstring = "{"
+                try:
+                    for j in range(len(i['order']['products'])):
+                        # print(i['order']['products'][j].get('id'),end= " ")
+                        orderstring += i['order']['products'][j].get('id') + ","
+                    orderstring = orderstring[:-1]
+                    orderstring += "}"
+                except:
+                    orderstring = "{}"
 
-    col = db.sessions
-    sessions = col.find()
-
-    count = 0
-    for i in sessions:
-        orderstring = "{"
-        try:
-            for j in range(len(i['order']['products'])):
-                # print(i['order']['products'][j].get('id'),end= " ")
-                orderstring += i['order']['products'][j].get('id') + ","
-            orderstring = orderstring[:-1]
-            orderstring += "}"
-        except:
-            orderstring = "{}"
-
-        cur.execute("INSERT INTO all_se (_ID, buid, has_sale, preferences,itorder,segment) VALUES (%s, %s,%s,%s,%s,%s)",
+                cur.execute(
+                    "INSERT INTO all_se (_ID, buid, has_sale, preferences,itorder,segment) VALUES (%s, %s,%s,%s,%s,%s)",
                     (str(i['_id']),
                      str(i['buid']) if 'buid' in i else None,
                      str(i['has_sale']) if 'has_sale' in i else None,
-                     str(i['preferences']) if 'preferences' in i else None,
+                     str(i['preferences']['brand']) if 'preferences' in i else None,
+                     # str(i['order']['products'][0]) if 'products' in i else None,
                      orderstring,
                      str(i['segment']) if 'segment' in i else None))
+            except:
+                if count % 1000 == 0:
+                    print(count, "Sessions")
+                    print("error")
+                    conn.commit()
+
+            if count % 1000 == 0:
+                print(count, "Sessions")
+                print("error")
+                conn.commit()
+
         count += 1
+
         if count % 1000 == 0:
             print(count, "Sessions")
+            conn.commit()
     print("done with sessions")
     conn.commit()
 
@@ -358,16 +397,16 @@ cur = conn.cursor()
 
 #~~~~~~~~~~~~~~~~~~~~~~~~ code voor product koppeling
 
-dataimportmgdb()
+#dataimportmgdb()
 
 searchitems = createrecomendeditemsrecords()
 
-clearerd()
-filldata()
-queuedata()
-fkmaker()
+#clearerd()
+#filldata()
+#queuedata()
+#fkmaker()
 
-sessiontoprofile()
+#sessiontoprofile()
 
 #~~~~~~~~~~~~~~~~~~~~~~~~ code voor profil koppeling
 #getsegmenttypes()
