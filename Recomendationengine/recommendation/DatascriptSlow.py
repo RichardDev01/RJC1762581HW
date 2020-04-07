@@ -368,24 +368,56 @@ def fkmaker():
     cur.execute("ALTER TABLE session ADD CONSTRAINT session_fk0 FOREIGN KEY (profile_id) REFERENCES profile(id);")
 
 def sessiontoprofile():
-    cur.execute("select buid,id from session where prefences != 'null'")
+    #cur.execute("select buid,id from session where prefences != 'null'")
+    cur.execute("select buid,prefences,itorder,id from session where prefences != '{}' or itorder !='{}' order by prefences desc")
     buids = cur.fetchall()
     count = 0
-    for buid in buids[:250]:
-        #print(buid[0][2:-2])
-        cur.execute("SELECT id FROM profile WHERE buids LIKE '%{}%'".format(buid[0][2:-2]))
+    print(len(buids))
+    cur.execute("SELECT id, buids FROM profile")
+    #cur.execute("SELECT id FROM profile")
+    proinfo = cur.fetchall()
+    matching = [s for s in proinfo if '{r390PNmqPdqIs9xNH9aBQT2yktexrUycgjFuLWpDwHpkxpepow65ja7XFwlchYcB7hbI}' in s]
+    print(matching)
+
+    #print(proinfo.index('5c485b2677267e00010652e0'))
+    for buid in buids[:2800]:
         try:
+            convbuid = "{" + str(buid[0][2:-2]) + "}"
+            matching = [s for s in proinfo if convbuid in s]
+            #print((matching[0][0], buid[3]))
+            #print(buid[0][2:-2])
+            if len(buids[0][1]) > 3:
+                recommendation = buids[0][1]
+            else:
+                recommendation = buids[0][2]
+            cur.execute("UPDATE session SET profile_id = '{}' WHERE id = '{}';".format(matching[0][0], buid[3]))
+            cur.execute("UPDATE profile SET recommendations = '{}' WHERE id = '{}'; ".format(recommendation, matching[0][0]))
+        except:
+            print("error")
+        count += 1
+        if count % 50 == 0:
+            print(count, "profiles linked")
+
+    '''
+    for buid in buids[:3000]:
+        try:
+            #print(buid[0][2:-2])
+            cur.execute("SELECT id FROM profile WHERE buids LIKE '%{}%'".format(buid[0][2:-2]))
+            if len(buids[0][1]) > 3:
+                recommendation = buids[0][1]
+            else:
+                recommendation = buids[0][2]
             profid = cur.fetchall()[0][0]
-            sesid = buid[1]
-            #print("profid",profid)
-            #print("id",sesid)
+            sesid = buid[3]
             cur.execute("UPDATE session SET profile_id = '{}' WHERE id = '{}';".format(profid,sesid))
+            #cur.execute("UPDATE profile SET recommendations = '{}' WHERE id = '{}'; ".format(recommendation,profid))
         except:
             print("Error","profid",profid,"id",sesid)
             #print("id",sesid)
         count += 1
         if count % 50 == 0:
             print(count, "profiles linked")
+    '''
     print("done with profile-link")
 
 
@@ -397,19 +429,17 @@ cur = conn.cursor()
 
 #~~~~~~~~~~~~~~~~~~~~~~~~ code voor product koppeling
 
-#dataimportmgdb()
+dataimportmgdb()
 
 searchitems = createrecomendeditemsrecords()
 
-#clearerd()
-#filldata()
-#queuedata()
-#fkmaker()
+clearerd()
+filldata()
+queuedata()
 
-#sessiontoprofile()
+sessiontoprofile()
 
-#~~~~~~~~~~~~~~~~~~~~~~~~ code voor profil koppeling
-#getsegmenttypes()
+fkmaker()
 
 # Make the changes to the database persistent
 conn.commit()
